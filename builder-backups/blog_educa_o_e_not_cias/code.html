@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Blog DENTALAB | Excelência em Prótese Dentária</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#04090f",
+                    "on-primary-fixed": "#041a3f",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#161c22",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-background": "#0b1c30",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "primary": "#05133b",
+                    "inverse-surface": "#213145",
+                    "background": "#f8f9ff",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#b4c6f4",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#d9e2ff",
+                    "tertiary-container": "#1b2127",
+                    "primary-container": "#0a1f44",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-container": "#828890",
+                    "on-secondary-container": "#616363",
+                    "on-primary-fixed-variant": "#34466d",
+                    "secondary-container": "#dfe0e0",
+                    "outline-variant": "#c5c6cf",
+                    "primary-fixed-dim": "#b4c6f4",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#4c5e86",
+                    "secondary": "#5d5f5f",
+                    "surface-variant": "#d3e4fe",
+                    "tertiary-fixed-dim": "#c1c7cf",
+                    "on-surface": "#0b1c30",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-dim": "#cbdbf5",
+                    "outline": "#75777f",
+                    "tertiary-fixed": "#dde3eb",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "surface": "#f8f9ff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-container": "#e5eeff",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-fixed-variant": "#41474e",
+                    "on-surface-variant": "#44464e",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-primary-container": "#7687b2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "80px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "container-max-width": "1200px",
+                    "gutter": "24px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .soft-shadow {
+        box-shadow: 0 10px 40px -15px rgba(0, 8, 30, 0.08);
+      }
+      body {
+        background-color: #f8f9ff;
+        color: #0b1c30;
+      }
+    </style>
+</head>
+<body class="font-body-md text-body-md">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-50 bg-surface/70 backdrop-blur-md shadow-sm">
+<nav class="flex justify-between items-center px-margin-desktop py-4 max-w-[1200px] mx-auto">
+<div class="text-body-lg font-headline-lg tracking-tighter text-primary">
+                DENTALAB
+            </div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-secondary hover:text-primary transition-colors font-label-md text-label-md" href="#">Home</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-md text-label-md" href="#">Serviços</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Blog</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-md text-label-md hover:opacity-80 transition-opacity active:scale-95 duration-150">
+                Contato
+            </button>
+</nav>
+</header>
+<main class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-12">
+<!-- Blog Header & Category Search -->
+<section class="mb-12 text-center md:text-left">
+<h1 class="font-display-lg text-[48px] md:text-display-lg text-primary mb-6">Conhecimento que Transforma Sorrisos</h1>
+<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+<div class="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto scrollbar-hide">
+<span class="px-4 py-2 bg-primary text-on-primary rounded-full text-label-md font-label-md cursor-pointer whitespace-nowrap">Tudo</span>
+<span class="px-4 py-2 bg-white text-secondary border border-outline-variant rounded-full text-label-md font-label-md hover:border-primary transition-colors cursor-pointer whitespace-nowrap">Inovação</span>
+<span class="px-4 py-2 bg-white text-secondary border border-outline-variant rounded-full text-label-md font-label-md hover:border-primary transition-colors cursor-pointer whitespace-nowrap">Materiais</span>
+<span class="px-4 py-2 bg-white text-secondary border border-outline-variant rounded-full text-label-md font-label-md hover:border-primary transition-colors cursor-pointer whitespace-nowrap">Casos Clínicos</span>
+</div>
+<div class="relative w-full md:w-80">
+<input class="w-full pl-12 pr-4 py-3 bg-white border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-body-md font-body-md outline-none" placeholder="Buscar artigos..." type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+</div>
+</div>
+</section>
+<!-- Featured Post -->
+<section class="mb-section-gap">
+<div class="relative group cursor-pointer overflow-hidden rounded-[24px] bg-white soft-shadow flex flex-col md:flex-row">
+<div class="md:w-3/5 h-[300px] md:h-[500px] overflow-hidden relative">
+<img alt="Odontologia Digital" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A high-tech dental laboratory scene featuring a professional 3D scanner capturing a detailed dental impression. The lighting is clinical yet warm, with soft studio illumination highlighting the pristine white surfaces and metallic dental tools. The composition is modern and clean, utilizing a palette of clinical whites and deep navy blues to evoke a sense of advanced medical innovation and precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw"/>
+<div class="absolute top-6 left-6 glass-effect px-4 py-1.5 rounded-full flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-label-md font-label-md text-primary">Destaque</span>
+</div>
+</div>
+<div class="md:w-2/5 p-8 md:p-12 flex flex-col justify-center">
+<p class="text-primary/60 font-label-md text-label-md mb-4 uppercase tracking-wider">Inovação Digital</p>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6 leading-tight">O Futuro da Moldagem: Como o Fluxo Digital está Redefinindo a Precisão</h2>
+<p class="text-secondary font-body-md text-body-md mb-8 line-clamp-3">Descubra como as novas tecnologias de escaneamento intraoral e impressão 3D estão eliminando erros manuais e garantindo adaptações marginais perfeitas em próteses fixas.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">DT</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Dr. Ricardo Silva</p>
+<p class="text-[12px] text-secondary">Chief Tech Officer</p>
+</div>
+</div>
+<button class="flex items-center gap-2 text-primary font-label-md text-label-md group/btn">
+                            Ler mais 
+                            <span class="material-symbols-outlined transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Post Grid: Bento Style -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-section-gap">
+<!-- Post 1 -->
+<article class="bg-white p-8 rounded-[24px] soft-shadow flex flex-col hover:-translate-y-2 transition-transform duration-300">
+<div class="aspect-video rounded-xl overflow-hidden mb-6">
+<img alt="Zircônia Translúcida" class="w-full h-full object-cover" data-alt="A macro photograph of a high-quality translucent zirconia dental crown resting on a reflective white surface. The lighting is soft and ethereal, emphasizing the material's natural-looking gradient and ceramic texture. The overall aesthetic is minimalist and high-end, focusing on the craftsmanship and material science of dental prosthetics within a clean, professional clinical environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKn_QH7fc-Ma5PbUDxPweV84-VsmX7d90m25wxarupiCx0oZa1K2CiiUBcxeZbG6mXonpfGMRlTTG-iUQY87rDyIlhGnEyp5JtqB5WaVCAaIH9zXPdA1PLlsMzqQWVt6ZnLcwPV8FV7InXU9o3RZT8EYxSQ2HAi2rJ48q4cN_prb30T2nQ-UEv-vhus6vX8bU8QEiykua951-4BunNcSxIBeR0zBDmfHpoDu_h4FWWX5dCJblhgmxq1X9PGytgLiF5owtIw45rVX8"/>
+</div>
+<span class="text-primary font-label-md text-label-md mb-3">Materiais Odontológicos</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-4 leading-snug">Zircônia Multilayer: A Revolução da Estética e Resistência</h3>
+<p class="text-secondary font-body-md text-body-md mb-6 flex-grow">Entenda por que a zircônia de última geração se tornou a escolha número um para reabilitações extensas.</p>
+<div class="pt-6 border-t border-outline-variant flex items-center justify-between">
+<span class="text-[12px] text-outline">5 min de leitura</span>
+<span class="material-symbols-outlined text-primary">arrow_outward</span>
+</div>
+</article>
+<!-- Post 2 -->
+<article class="bg-primary p-8 rounded-[24px] text-white flex flex-col hover:-translate-y-2 transition-transform duration-300">
+<div class="mb-8">
+<span class="material-symbols-outlined text-[48px] text-primary-fixed-dim">handshake</span>
+</div>
+<span class="text-primary-fixed-dim font-label-md text-label-md mb-3">Parceria Lab-Clínica</span>
+<h3 class="font-headline-md text-headline-md mb-4 leading-snug">Comunicação Eficiente: O Segredo para o Sucesso Protético</h3>
+<p class="text-primary-fixed/70 font-body-md text-body-md mb-6 flex-grow">Dicas práticas de como otimizar o envio de pedidos e fotos para garantir resultados previsíveis em cada caso.</p>
+<div class="pt-6 border-t border-white/10 flex items-center justify-between">
+<span class="text-[12px] text-primary-fixed-dim">8 min de leitura</span>
+<span class="material-symbols-outlined text-primary-fixed">arrow_outward</span>
+</div>
+</article>
+<!-- Post 3 -->
+<article class="bg-white p-8 rounded-[24px] soft-shadow flex flex-col hover:-translate-y-2 transition-transform duration-300">
+<div class="aspect-video rounded-xl overflow-hidden mb-6">
+<img alt="Lente de Contato Dental" class="w-full h-full object-cover" data-alt="An artistic close-up of a dentist carefully positioning a thin ceramic veneer on a stone dental model. The scene is shot with a shallow depth of field, highlighting the delicate manual artistry involved in dental work. The lighting is focused and warm, creating a sense of precision and high-level craftsmanship. The background is a blurred, professional laboratory setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdAuVJb9xgRM8JaKQdlfUhAsUScVYP-f_cvUFJYZ1e6GJlelINAwyLKJkr1eOk-iVKIBuhwDLrcgVmNullz0tHsW4g8B65XlRpY6iSrXwEQZA2wks1Ywiz8KGUQkf3yPhMJ1-9mmUWnqNtzqu053vr1WUDhQJ7fDL7wQH7nGipYkB3ZsQDR2DdtLNPcCVfcUhYBZ4ks6IMaY5kFaHewqCWZBmbXu008KZy3KQ2GiE4MpbiwgIlEGBmrrs_XJvYqrsPUd6ya-G5KYg"/>
+</div>
+<span class="text-primary font-label-md text-label-md mb-3">Estética Avançada</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-4 leading-snug">Lentes de Contato: Da Projeção Digital à Cimentação Final</h3>
+<p class="text-secondary font-body-md text-body-md mb-6 flex-grow">Um guia completo sobre o workflow de facetas ultrafinas e o impacto no planejamento reverso.</p>
+<div class="pt-6 border-t border-outline-variant flex items-center justify-between">
+<span class="text-[12px] text-outline">12 min de leitura</span>
+<span class="material-symbols-outlined text-primary">arrow_outward</span>
+</div>
+</article>
+</section>
+<!-- Newsletter Section -->
+<section class="bg-surface-container-low rounded-[40px] p-8 md:p-16 text-center relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32"></div>
+<div class="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full -ml-24 -mb-24"></div>
+<div class="max-w-2xl mx-auto relative z-10">
+<span class="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full font-label-md text-label-md mb-6">DENTALAB Newsletter</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Receba atualizações técnicas exclusivas</h2>
+<p class="text-secondary font-body-md text-body-md mb-10">Assine nossa newsletter e receba mensalmente artigos científicos, novidades sobre materiais e convites para workshops exclusivos.</p>
+<form class="flex flex-col md:flex-row gap-4 items-stretch justify-center">
+<input class="flex-1 px-6 py-4 bg-white border border-outline-variant rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md outline-none" placeholder="seu-email@clinica.com.br" type="email"/>
+<button class="bg-primary text-on-primary px-8 py-4 rounded-2xl font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                        Inscrever-se Agora
+                    </button>
+</form>
+<p class="text-[12px] text-outline mt-6 italic">Prometemos não enviar spam. Você pode cancelar a qualquer momento.</p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-tertiary-container w-full py-section-gap mt-section-gap">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop max-w-[1200px] mx-auto">
+<div class="col-span-1 md:col-span-1">
+<div class="text-headline-md font-headline-md text-primary mb-6">DENTALAB</div>
+<p class="text-on-surface-variant font-body-md text-body-md mb-6">Excelência técnica e inovação digital para consultórios que buscam resultados de alto nível.</p>
+</div>
+<div>
+<h4 class="font-bold text-primary font-label-md text-label-md mb-6 uppercase tracking-wider">Navegação</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all font-label-md text-label-md" href="#">Home</a></li>
+<li><a class="text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all font-label-md text-label-md" href="#">Serviços</a></li>
+<li><a class="text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all font-label-md text-label-md" href="#">Blog</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-primary font-label-md text-label-md mb-6 uppercase tracking-wider">Suporte</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all font-label-md text-label-md" href="#">FAQ</a></li>
+<li><a class="text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all font-label-md text-label-md" href="#">Localização</a></li>
+<li><a class="text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all font-label-md text-label-md" href="#">Termos de Uso</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-primary font-label-md text-label-md mb-6 uppercase tracking-wider">Privacidade</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary underline decoration-primary/30 transition-all font-label-md text-label-md" href="#">Política de Privacidade</a></li>
+<li class="flex gap-4 pt-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">share</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">mail</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="max-w-[1200px] mx-auto px-margin-desktop mt-16 pt-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-on-surface-variant font-label-md text-label-md text-center md:text-left">© 2024 DENTALAB. Todos os direitos reservados.</p>
+<p class="text-on-surface-variant font-label-md text-label-md italic">Sua parceria em reabilitação oral.</p>
+</div>
+</footer>
+<script>
+        // Micro-interactions and subtle effects
+        document.querySelectorAll('article').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.querySelector('.material-symbols-outlined').classList.add('translate-x-1', '-translate-y-1');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.querySelector('.material-symbols-outlined').classList.remove('translate-x-1', '-translate-y-1');
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Login Administrativo | Laboratório Lavorato</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "primary": "#05133b",
+              "background": "#f8f9ff"
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(11, 28, 48, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .soft-shadow {
+            box-shadow: 0 20px 50px -15px rgba(0, 8, 30, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-[#05133b] min-h-screen flex items-center justify-center px-6 relative overflow-hidden">
+    
+    <!-- Background Light Beams -->
+    <div class="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px]"></div>
+
+    <!-- Login Container -->
+    <div class="glass-panel w-full max-w-[440px] p-10 rounded-[32px] soft-shadow text-white relative z-10">
+        <!-- Logo / Back Link -->
+        <div class="flex justify-between items-center mb-10">
+            <a href="index.html" class="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm font-semibold">
+                <span class="material-symbols-outlined text-sm">arrow_back</span> Voltar ao site
+            </a>
+            <img src="assets/images/Logo.avif" alt="Laboratório Lavorato" class="h-6 w-auto object-contain filter brightness-0 invert opacity-80"/>
+        </div>
+
+        <div class="mb-8">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2">Acesso Interno</h1>
+            <p class="text-white/60 text-sm">Entre com suas credenciais de equipe para gerenciar o sistema.</p>
+        </div>
+
+        <!-- Form -->
+        <form id="login-form" class="space-y-6">
+            <div class="space-y-2">
+                <label class="block text-xs uppercase tracking-wider text-white/50 font-bold">E-mail Corporativo</label>
+                <div class="relative">
+                    <input id="login-email" type="email" placeholder="admin@laboratoriolavorato.com.br" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pl-12 text-sm text-white focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all placeholder:text-white/20"/>
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30">mail</span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs uppercase tracking-wider text-white/50 font-bold">Senha de Acesso</label>
+                <div class="relative">
+                    <input id="login-password" type="password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pl-12 text-sm text-white focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/30 transition-all placeholder:text-white/20"/>
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30">lock</span>
+                </div>
+            </div>
+
+            <div id="error-message" class="hidden flex items-center gap-2 text-red-400 bg-red-500/10 border border-red-500/20 p-4 rounded-2xl text-xs font-semibold">
+                <span class="material-symbols-outlined text-sm">error</span>
+                <span>E-mail ou senha incorretos!</span>
+            </div>
+
+            <button type="submit" class="w-full bg-white text-[#05133b] py-4 rounded-2xl font-bold hover:bg-opacity-90 active:scale-95 duration-150 transition-all uppercase tracking-wider text-xs shadow-lg shadow-white/5">
+                Entrar no Painel
+            </button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { supabase, isSupabaseConfigured, isEmailAuthorized } from './assets/js/supabase-client.js';
+
+        const loginForm = document.getElementById('login-form');
+        const errorMessage = document.getElementById('error-message');
+
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            errorMessage.classList.add('hidden');
+
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            // Se o Supabase estiver configurado
+            if (isSupabaseConfigured()) {
+                // Primeiro valida se o email está na lista autorizada
+                if (!(await isEmailAuthorized(email))) {
+                    errorMessage.querySelector('span:last-child').textContent = 'Este e-mail não tem autorização para acessar o sistema!';
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+
+                try {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (error) {
+                        errorMessage.querySelector('span:last-child').textContent = 'E-mail ou senha incorretos!';
+                        errorMessage.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Login com sucesso no Supabase
+                    localStorage.setItem('dentalab_admin_authenticated', 'true');
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    console.error("Erro na autenticação:", err);
+                    errorMessage.querySelector('span:last-child').textContent = 'Erro de conexão com o banco de dados!';
+                    errorMessage.classList.remove('hidden');
+                }
+            } else {
+                // Fallback para desenvolvimento local sem Supabase
+                console.warn("Supabase não configurado. Utilizando bypass local para demonstração.");
+                if (await isEmailAuthorized(email) || email === 'admin@laboratoriolavorato.com.br') {
+                    localStorage.setItem('dentalab_admin_authenticated', 'true');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorMessage.querySelector('span:last-child').textContent = 'E-mail não autorizado localmente!';
+                    errorMessage.classList.remove('hidden');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

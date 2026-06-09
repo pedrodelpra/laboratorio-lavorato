@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Painel Administrativo | Laboratório Lavorato</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "primary": "#05133b",
+              "background": "#f8f9ff",
+              "surface-container-low": "#eff4ff"
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #05133b; border-radius: 3px; }
+    </style>
+    <script>
+        // Simple security gate
+        try {
+            if (localStorage.getItem('dentalab_admin_authenticated') !== 'true') {
+                window.location.href = 'login.html';
+            }
+        } catch (e) {
+            console.error("Erro ao verificar autenticação:", e);
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body class="bg-background text-primary min-h-screen flex">
+    
+    <!-- Sidebar -->
+    <aside class="w-64 bg-primary text-white flex flex-col fixed h-[calc(100vh-2rem)] my-4 ml-4 rounded-3xl shadow-xl z-20">
+        <!-- Logo Area -->
+        <div class="p-8 border-b border-white/5 flex flex-col gap-2">
+            <a href="index.html" class="hover:opacity-85 transition-opacity">
+                <img src="assets/images/Logo.avif" alt="Laboratório Lavorato" class="h-9 w-auto object-contain filter brightness-0 invert"/>
+            </a>
+            <span class="text-[9px] uppercase tracking-widest text-white/30 font-semibold">Painel de Controle</span>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="flex-1 p-5 space-y-1.5">
+            <button onclick="switchTab('leads')" id="tab-btn-leads" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-white/10 text-white shadow-sm">
+                <span class="material-symbols-outlined text-[20px]">contact_mail</span>
+                <span>Leads / Contatos</span>
+            </button>
+            <button onclick="switchTab('blog')" id="tab-btn-blog" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/50 hover:text-white hover:bg-white/5">
+                <span class="material-symbols-outlined text-[20px]">edit_note</span>
+                <span>Blog</span>
+            </button>
+            <button onclick="switchTab('editor')" id="tab-btn-editor" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/50 hover:text-white hover:bg-white/5">
+                <span class="material-symbols-outlined text-[20px]">design_services</span>
+                <span>Editar Site</span>
+            </button>
+        </nav>
+
+        <!-- Log Out Section -->
+        <div class="p-5 border-t border-white/5">
+            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-3 border border-red-500/20 hover:border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 active:scale-95">
+                <span class="material-symbols-outlined text-sm">logout</span>
+                <span>Sair do Sistema</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 ml-72 p-10 max-w-7xl">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8 pb-6 border-b border-slate-100">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-primary" id="section-title">Leads / Contatos</h1>
+                <p class="text-slate-500 text-sm mt-1" id="section-subtitle">Acompanhe as solicitações de orçamento e contatos que chegam pelo site.</p>
+            </div>
+        </header>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="fixed bottom-8 right-8 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+        <!-- LEADS SECTION -->
+        <section id="content-leads" class="space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/75 text-slate-500 text-[11px] uppercase tracking-wider font-semibold border-b border-slate-100">
+                                <th class="p-5 font-semibold w-32 whitespace-nowrap">Data</th>
+                                <th class="p-5 font-semibold w-56 whitespace-nowrap">Dentista / CRO</th>
+                                <th class="p-5 font-semibold w-56 whitespace-nowrap">Contato</th>
+                                <th class="p-5 font-semibold w-auto">Mensagem</th>
+                                <th class="p-5 font-semibold w-48 text-right whitespace-nowrap">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-table-body" class="divide-y divide-slate-100 text-sm">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Empty state leads -->
+                <div id="leads-empty-state" class="hidden text-center py-20 bg-white">
+                    <span class="material-symbols-outlined text-[48px] text-slate-300 mb-2">inbox</span>
+                    <p class="text-slate-500 font-medium">Nenhum lead de contato cadastrado até o momento.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOG CMS SECTION -->
+        <section id="content-blog" class="hidden space-y-6">
+            <!-- Header bar for Blog CMS -->
+            <div class="flex justify-between items-center bg-white p-6 md:p-8 rounded-2xl border border-slate-100 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-xl">article</span>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-base text-primary">Gerenciamento de Conteúdo</h2>
+                        <p class="text-xs text-slate-500 font-medium mt-0.5">Veja todos os posts postados ou agendados e gerencie o blog da Lavorato.</p>
+                    </div>
+                </div>
+                <button onclick="openBlogModal()" class="flex items-center gap-2 bg-primary hover:opacity-90 active:scale-95 text-white px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider duration-150 transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-sm font-bold">add</span> Novo Artigo
+                </button>
+            </div>
+
+            <!-- List/Table of Published and Scheduled Articles -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/75 text-slate-500 text-[11px] uppercase tracking-wider font-semibold border-b border-slate-100">
+                                <th class="p-5 font-semibold w-1/2">Artigo</th>
+                                <th class="p-5 font-semibold w-44 whitespace-nowrap">Status / Data</th>
+                                <th class="p-5 font-semibold w-32 whitespace-nowrap">Leitura</th>
+                                <th class="p-5 font-semibold w-28 text-right whitespace-nowrap">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cms-blog-table-body" class="divide-y divide-slate-100 text-sm">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Empty state blog -->
+                <div id="blog-empty-state" class="hidden text-center py-20 bg-white">
+                    <span class="material-symbols-outlined text-[48px] text-slate-300 mb-2">article</span>
+                    <p class="text-slate-500 font-medium">Nenhum artigo cadastrado até o momento.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Premium Full-Page Editor for Adding/Editing Blog Articles -->
+        <section id="content-blog-editor" class="hidden space-y-6">
+            <div class="bg-white p-8 md:p-10 rounded-2xl border border-slate-100 shadow-sm space-y-8">
+                <!-- Editor Header -->
+                <div class="flex justify-between items-center pb-6 border-b border-slate-100">
+                    <h2 id="cms-form-title" class="text-lg font-bold flex items-center gap-2 text-primary">
+                        <span class="material-symbols-outlined text-primary">post_add</span> Publicar Novo Artigo
+                    </h2>
+                    <button onclick="closeBlogModal()" class="flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-semibold px-4 py-2 rounded-xl hover:bg-slate-50">
+                        <span class="material-symbols-outlined text-base">arrow_back</span>
+                        <span>Voltar para Lista</span>
+                    </button>
+                </div>
+
+                <form id="cms-blog-form" class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Título do Artigo</label>
+                        <input required id="cms-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Ex: Zircônia Multilayer: Nova Estética" type="text"/>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Data de Publicação</label>
+                        <input required id="cms-date" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="date"/>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">URL da Imagem do Artigo</label>
+                        <input id="cms-image" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Ex: https://images.unsplash.com/photo-..." type="text" oninput="syncGallerySelection()"/>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Texto Alternativo da Imagem (SEO Alt Text)</label>
+                        <input id="cms-image-alt" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Descreva o que aparece na imagem para ajudar no ranqueamento do Google" type="text"/>
+                    </div>
+
+                    <div class="flex items-center gap-2 mt-2">
+                        <input type="checkbox" id="cms-save-to-gallery" class="rounded border-slate-300 text-primary focus:ring-primary h-4 w-4"/>
+                        <label for="cms-save-to-gallery" class="text-xs text-slate-500 font-medium select-none cursor-pointer">Salvar esta imagem na galeria de presets</label>
+                    </div>
+
+                        <!-- Collapsible Visual Image Gallery -->
+                        <div class="mt-4 border border-slate-100 rounded-xl overflow-hidden bg-slate-50/20 shadow-sm">
+                            <button type="button" onclick="toggleGallery()" class="w-full flex items-center justify-between px-5 py-4 bg-slate-50/50 hover:bg-slate-50 transition-colors font-semibold text-xs uppercase tracking-wider text-primary select-none">
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px] text-slate-500">photo_library</span>
+                                    <span>Galeria de Imagens (Presets SEO)</span>
+                                </span>
+                                <span id="gallery-chevron" class="material-symbols-outlined transition-transform duration-200">expand_more</span>
+                            </button>
+                            <div id="gallery-collapsible-content" class="hidden p-5 border-t border-slate-100 space-y-4">
+                                <!-- Gallery Actions Toolbar -->
+                                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-50 pb-3">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400">Banco de Imagens Local</span>
+                                    <div class="flex gap-2">
+                                        <button type="button" onclick="toggleBulkImportForm()" class="px-3 py-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 text-primary text-xs font-bold transition-all flex items-center gap-1.5">
+                                            <span class="material-symbols-outlined text-sm">library_add</span>
+                                            <span>Adicionar em Lote</span>
+                                        </button>
+                                        <button type="button" onclick="clearGalleryDatabase()" class="px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold transition-all flex items-center gap-1.5">
+                                            <span class="material-symbols-outlined text-sm">delete_sweep</span>
+                                            <span>Limpar Galeria</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Bulk Import Form (Hidden by default) -->
+                                <div id="bulk-import-form" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-3">
+                                    <label class="block text-xs font-semibold text-slate-600">Cole uma ou mais URLs de imagem (uma por linha):</label>
+                                    <textarea id="bulk-urls-input" rows="4" class="w-full rounded-xl border-slate-200 text-xs p-3 focus:ring-primary focus:border-primary outline-none" placeholder="https://images.unsplash.com/photo-...\nhttps://images.unsplash.com/photo-..."></textarea>
+                                    <div class="flex justify-end gap-2">
+                                        <button type="button" onclick="toggleBulkImportForm()" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-200 transition-colors">Cancelar</button>
+                                        <button type="button" onclick="processBulkImport()" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-primary text-white hover:opacity-90 transition-all">Importar URLs</button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[300px] overflow-y-auto pr-1" id="image-gallery-presets">
+                                    <!-- Injected dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Textarea Content (Col span 2 on large screens) -->
+                        <div class="lg:col-span-2 space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Conteúdo Completo</label>
+                            <textarea required id="cms-content" rows="16" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm font-mono min-h-[380px]" placeholder="Escreva aqui todo o conteúdo científico ou técnico do artigo de blog..."></textarea>
+                        </div>
+                        
+                        <!-- SEO Assistant & Metrics Panel (Col span 1) -->
+                        <div class="bg-slate-50/50 border border-slate-100 rounded-xl p-6 flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <h4 class="text-xs uppercase tracking-wider text-primary font-bold flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-[18px] text-slate-500">query_stats</span>
+                                    Assistente de SEO & Leitura
+                                </h4>
+                                
+                                <!-- Progress Bar Indicator -->
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-xs font-semibold">
+                                        <span class="text-slate-500">Extensão / Qualidade:</span>
+                                        <span id="seo-score-text" class="text-red-500 font-bold">Vazio</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                        <div id="seo-progress-bar" class="bg-red-500 h-full w-[5%] transition-all duration-300"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Stats Grid -->
+                                <div class="grid grid-cols-2 gap-3 pt-2">
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100 text-center shadow-sm">
+                                        <p class="text-[10px] uppercase font-semibold text-slate-400">Palavras</p>
+                                        <p id="seo-word-count" class="text-lg font-bold text-primary">0</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100 text-center shadow-sm">
+                                        <p class="text-[10px] uppercase font-semibold text-slate-400">Parágrafos</p>
+                                        <p id="seo-paragraph-count" class="text-lg font-bold text-primary">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Advice block -->
+                            <div class="mt-4 pt-4 border-t border-slate-100 space-y-2 text-[11px] text-slate-500 leading-relaxed">
+                                <p id="seo-advice-text" class="font-medium text-primary">Escreva algumas palavras para iniciar a análise.</p>
+                                <ul class="list-disc pl-3.5 space-y-1">
+                                    <li>Recomendado: 8 a 15 parágrafos (mínimo de 600 palavras).</li>
+                                    <li>Evite parágrafos gigantescos para facilitar a leitura.</li>
+                                    <li>Organize as ideias com sub-títulos para engajamento.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer SEO Switch -->
+                    <div class="flex items-start gap-3 bg-slate-50/50 border border-slate-100 rounded-xl p-5 hover:border-primary/20 transition-colors">
+                        <input id="cms-hasfooter" type="checkbox" checked class="mt-1.5 w-4 h-4 text-primary focus:ring-primary border-slate-200 rounded cursor-pointer"/>
+                        <div class="cursor-pointer select-none" onclick="document.getElementById('cms-hasfooter').click()">
+                            <label class="block text-xs uppercase tracking-wider text-primary font-bold cursor-pointer">Habilitar Rodapé Institucional (SEO)</label>
+                            <p class="text-xs text-slate-500 mt-1">Exibe informações institucionais sobre o laboratório (fundado em 1991, 35+ anos, sediado em Jundiaí, atende Grande São Paulo e fluxo CAD/CAM) no final do post para otimizar indexação no Google.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-6 border-t border-slate-100">
+                        <button type="submit" id="cms-submit-btn" class="bg-primary text-white px-8 py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                            Publicar Artigo
+                        </button>
+                        <button type="button" onclick="closeBlogModal()" class="bg-slate-50 hover:bg-slate-100 text-slate-500 px-6 py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider active:scale-95 duration-150 transition-all border border-slate-150">
+                            Cancelar e Voltar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- EDITOR SECTION -->
+        <section id="content-editor" class="hidden space-y-5">
+
+            <!-- 1. HERO BANNER -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-hero')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">design_services</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Banner Principal (Hero)</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-hero">expand_more</span>
+                </button>
+                <div id="acc-hero" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <form id="hero-edit-form" class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Título Principal</label>
+                            <input required id="editor-hero-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="Ex: Laboratório de Prótese Dentária com Precisão"/>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Subtítulo de Apoio</label>
+                            <textarea required id="editor-hero-subtitle" rows="3" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Escreva a descrição resumida do banner..."></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Link da Imagem de Fundo</label>
+                            <div class="flex gap-2">
+                                <input required id="editor-hero-bg" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="Ex: assets/images/lavorato_hero.png"/>
+                                <button type="button" onclick="uploadImageForField('editor-hero-bg')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">upload</span>Enviar</button>
+                                <button type="button" onclick="openGalleryForField('editor-hero-bg')" class="bg-primary/5 hover:bg-primary/10 text-primary px-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap">Galeria</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                            Salvar Alterações do Banner
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 2. DIFERENCIAIS -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-differentials')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">stars</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Diferenciais / Parceiro Técnico</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-differentials">expand_more</span>
+                </button>
+                <div id="acc-differentials" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <form id="differentials-edit-form" class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Título da Seção</label>
+                            <input required id="editor-diff-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text"/>
+                        </div>
+                        <div class="border border-slate-100 rounded-xl p-4 space-y-3">
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Diferencial 1</span>
+                            <input id="editor-diff-1-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Título do diferencial"/>
+                            <textarea id="editor-diff-1-text" rows="2" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" placeholder="Descrição..."></textarea>
+                        </div>
+                        <div class="border border-slate-100 rounded-xl p-4 space-y-3">
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Diferencial 2</span>
+                            <input id="editor-diff-2-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Título do diferencial"/>
+                            <textarea id="editor-diff-2-text" rows="2" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" placeholder="Descrição..."></textarea>
+                        </div>
+                        <div class="border border-slate-100 rounded-xl p-4 space-y-3">
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Diferencial 3</span>
+                            <input id="editor-diff-3-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Título do diferencial"/>
+                            <textarea id="editor-diff-3-text" rows="2" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" placeholder="Descrição..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                            Salvar Diferenciais
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 3. DEPOIMENTOS -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-testimonials')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">reviews</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Depoimentos dos Dentistas</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-testimonials">expand_more</span>
+                </button>
+                <div id="acc-testimonials" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <div class="flex justify-end mb-4">
+                        <button type="button" onclick="openTestimonialModal()" class="px-3.5 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:opacity-90 transition-all flex items-center gap-1.5 shadow-sm">
+                            <span class="material-symbols-outlined text-sm">add</span>
+                            <span>Novo Depoimento</span>
+                        </button>
+                    </div>
+                    <div class="space-y-0 max-h-[400px] overflow-y-auto pr-1 divide-y divide-slate-100" id="editor-testimonials-list">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. SERVIÇOS -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-services')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">medical_services</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Serviços / Portfólio</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-services">expand_more</span>
+                </button>
+                <div id="acc-services" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <form id="services-edit-form" class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Título da Seção de Serviços</label>
+                            <input id="editor-svc-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text"/>
+                        </div>
+                        <div id="editor-services-list" class="space-y-3">
+                            <!-- Injected dynamically -->
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                            Salvar Serviços
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 5. CTA BOX -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-cta')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">campaign</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Chamada para Ação (CTA)</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-cta">expand_more</span>
+                </button>
+                <div id="acc-cta" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <form id="cta-edit-form" class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Título do CTA</label>
+                            <input id="editor-cta-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="Ex: Pronto para iniciar sua parceria?"/>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Subtítulo do CTA</label>
+                            <textarea id="editor-cta-subtitle" rows="2" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Descrição ou call-to-action..."></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Texto do Botão</label>
+                            <input id="editor-cta-btn" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="Ex: Entrar em Contato"/>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                            Salvar CTA
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 6. SOBRE NÓS (TEXTOS) -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-about')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">info</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Página Sobre Nós</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-about">expand_more</span>
+                </button>
+                <div id="acc-about" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <form id="about-edit-form" class="space-y-4">
+                        <p class="text-[10px] text-slate-400 font-medium">Edite os 3 parágrafos da história do laboratório exibidos na página "Sobre Nós".</p>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Parágrafo 1 — Origem e Fundação</label>
+                            <textarea id="editor-about-p1" rows="3" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Fundado originalmente na capital paulista..."></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Parágrafo 2 — Evolução e Processos</label>
+                            <textarea id="editor-about-p2" rows="3" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Ao longo dos anos..."></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Parágrafo 3 — Posicionamento Atual</label>
+                            <textarea id="editor-about-p3" rows="3" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Hoje, seguimos ao lado de cirurgiões-dentistas..."></textarea>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-4 mt-4">
+                            <p class="text-[10px] text-slate-400 font-medium mb-3">Estatísticas exibidas abaixo do texto (3 colunas):</p>
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                <div class="border border-slate-100 rounded-xl p-4 space-y-2">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400">Estatística 1</span>
+                                    <input id="editor-about-stat1-value" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="1991"/>
+                                    <input id="editor-about-stat1-label" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Ano de Fundação"/>
+                                </div>
+                                <div class="border border-slate-100 rounded-xl p-4 space-y-2">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400">Estatística 2</span>
+                                    <input id="editor-about-stat2-value" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="35+ Anos"/>
+                                    <input id="editor-about-stat2-label" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="No Mercado"/>
+                                </div>
+                                <div class="border border-slate-100 rounded-xl p-4 space-y-2">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400">Estatística 3</span>
+                                    <input id="editor-about-stat3-value" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="CAD/CAM"/>
+                                    <input id="editor-about-stat3-label" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Tecnologia Integrada"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                            Salvar Página Sobre Nós
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 7. PERGUNTAS FREQUENTES (FAQ) -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-faq')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">quiz</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Perguntas Frequentes (FAQ)</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-faq">expand_more</span>
+                </button>
+                <div id="acc-faq" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <p class="text-[10px] text-slate-400 font-medium mb-4">Gerencie as perguntas e respostas exibidas na seção de Dúvidas Frequentes da página de Contato.</p>
+                    
+                    <!-- Add new FAQ button -->
+                    <div class="flex justify-end mb-4">
+                        <button type="button" onclick="openFaqForm()" class="px-3.5 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:opacity-90 transition-all flex items-center gap-1.5 shadow-sm">
+                            <span class="material-symbols-outlined text-sm">add</span>
+                            <span>Nova Pergunta</span>
+                        </button>
+                    </div>
+
+                    <!-- FAQ Add/Edit Form (hidden by default) -->
+                    <div id="faq-edit-form-container" class="hidden bg-slate-50/50 border border-slate-100 rounded-xl p-5 mb-4 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h4 id="faq-form-title" class="text-xs uppercase tracking-wider text-primary font-bold flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[18px]">help_outline</span>
+                                Nova Pergunta
+                            </h4>
+                            <button type="button" onclick="closeFaqForm()" class="w-6 h-6 rounded-full flex items-center justify-center border border-slate-200 hover:bg-slate-100 transition-colors">
+                                <span class="material-symbols-outlined text-[12px] text-slate-500">close</span>
+                            </button>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Pergunta</label>
+                            <input id="faq-edit-question" class="w-full bg-white border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Ex: Qual o prazo médio de entrega para Zircônia?" type="text"/>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Resposta</label>
+                            <textarea id="faq-edit-answer" rows="3" class="w-full bg-white border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Escreva a resposta detalhada para esta pergunta..."></textarea>
+                        </div>
+                        <input type="hidden" id="faq-edit-index" value=""/>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="saveFaqItem()" class="bg-primary text-white px-5 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                                Salvar Pergunta
+                            </button>
+                            <button type="button" onclick="closeFaqForm()" class="bg-slate-50 hover:bg-slate-100 text-slate-500 px-4 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-wider active:scale-95 duration-150 transition-all border border-slate-150">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Items List -->
+                    <div class="space-y-0 max-h-[500px] overflow-y-auto pr-1 divide-y divide-slate-100" id="editor-faq-list">
+                        <!-- Injected dynamically -->
+                    </div>
+                    <!-- Empty state -->
+                    <div id="faq-empty-state" class="hidden text-center py-10">
+                        <span class="material-symbols-outlined text-[36px] text-slate-300 mb-2">quiz</span>
+                        <p class="text-slate-400 text-sm font-medium">Nenhuma pergunta cadastrada.</p>
+                        <p class="text-slate-400 text-xs mt-1">Clique em "Nova Pergunta" para adicionar.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 7. CONTATO & RODAPÉ -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-footer')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">contact_page</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Contato & Rodapé</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-footer">expand_more</span>
+                </button>
+                <div id="acc-footer" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <form id="footer-edit-form" class="space-y-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Telefone / WhatsApp</label>
+                                <input id="editor-footer-phone" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="(11) 94793-7339"/>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">E-mail</label>
+                                <input id="editor-footer-email" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="email" placeholder="contato@laboratoriolavorato.com.br"/>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Endereço</label>
+                            <textarea id="editor-footer-address" rows="2" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="R. Messina, 89 - Jardim Messina, Jundiaí - SP"></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Tagline do Rodapé</label>
+                            <input id="editor-footer-tagline" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="Elevando os padrões da prótese dentária..."/>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <div class="space-y-2">
+                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Instagram URL</label>
+                                <input id="editor-footer-instagram" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="https://instagram.com/..."/>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">WhatsApp Nº (com DDI)</label>
+                                <input id="editor-footer-whatsapp" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="5511947937339"/>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">LinkedIn URL</label>
+                                <input id="editor-footer-linkedin" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="https://linkedin.com/..."/>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                            Salvar Informações de Contato
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- TESTIMONIAL FORM MODAL -->
+    <div id="testimonial-modal" class="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-8 border border-slate-100 shadow-2xl space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                <h3 class="text-base font-bold text-primary flex items-center gap-2" id="testimonial-modal-title">
+                    <span class="material-symbols-outlined text-primary">reviews</span>
+                    <span>Adicionar Depoimento</span>
+                </h3>
+                <button type="button" onclick="closeTestimonialModal()" class="w-8 h-8 rounded-full flex items-center justify-center border border-slate-100 hover:bg-slate-50 transition-colors">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+
+            <form id="testimonial-form" class="space-y-4">
+                <input type="hidden" id="testimonial-edit-index" value=""/>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Nome Completo</label>
+                        <input required id="testimonial-name" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Ex: Dr. João Silva" type="text"/>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Cargo / Empresa</label>
+                        <input required id="testimonial-role" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Ex: Cirurgião Dentista" type="text"/>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Avaliação (Estrelas)</label>
+                        <select required id="testimonial-stars" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm">
+                            <option value="5" selected>5 Estrelas</option>
+                            <option value="4">4 Estrelas</option>
+                            <option value="3">3 Estrelas</option>
+                            <option value="2">2 Estrelas</option>
+                            <option value="1">1 Estrela</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Foto de Perfil (URL)</label>
+                        <div class="flex gap-2">
+                            <input id="testimonial-image" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Ex: assets/images/depoimentos/foto.jpg" type="text"/>
+                            <button type="button" onclick="uploadImageForField('testimonial-image')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">upload</span>Enviar</button>
+                            <button type="button" onclick="openGalleryForField('testimonial-image')" class="bg-primary/5 hover:bg-primary/10 text-primary px-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap">Galeria</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Texto do Depoimento</label>
+                    <textarea required id="testimonial-text" rows="4" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Escreva o depoimento aqui..."></textarea>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+                    <button type="submit" class="bg-primary text-white px-6 py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 transition-all shadow-sm">
+                        Salvar Depoimento
+                    </button>
+                    <button type="button" onclick="closeTestimonialModal()" class="bg-slate-50 hover:bg-slate-100 text-slate-500 px-5 py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider transition-all border border-slate-150">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- GALLERY PICKER MODAL -->
+    <div id="gallery-picker-modal" class="fixed inset-0 z-[60] bg-primary/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl p-8 border border-slate-100 shadow-2xl space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                <h3 class="text-base font-bold text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">photo_library</span>
+                    <span>Selecionar Imagem da Galeria</span>
+                </h3>
+                <button type="button" onclick="closeGalleryPickerModal()" class="w-8 h-8 rounded-full flex items-center justify-center border border-slate-100 hover:bg-slate-50 transition-colors">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[350px] overflow-y-auto pr-1" id="gallery-picker-grid">
+                <!-- Injected dynamically -->
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeGalleryPickerModal()" class="bg-slate-50 hover:bg-slate-100 text-slate-500 px-5 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-wider transition-all border border-slate-150">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tab) {
+            const title = document.getElementById('section-title');
+            const subtitle = document.getElementById('section-subtitle');
+            
+            const btnLeads = document.getElementById('tab-btn-leads');
+            const btnBlog = document.getElementById('tab-btn-blog');
+            const btnEditor = document.getElementById('tab-btn-editor');
+            
+            const contentLeads = document.getElementById('content-leads');
+            const contentBlog = document.getElementById('content-blog');
+            const contentBlogEditor = document.getElementById('content-blog-editor');
+            const contentEditor = document.getElementById('content-editor');
+ 
+            if (tab === 'leads') {
+                title.textContent = "Leads / Contatos";
+                subtitle.textContent = "Acompanhe as solicitações de orçamento e contatos que chegam pelo site.";
+                
+                btnLeads.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-white/10 text-white shadow-sm";
+                btnBlog.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/50 hover:text-white hover:bg-white/5";
+                btnEditor.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/50 hover:text-white hover:bg-white/5";
+                
+                contentLeads.classList.remove('hidden');
+                contentBlog.classList.add('hidden');
+                contentBlogEditor.classList.add('hidden');
+                contentEditor.classList.add('hidden');
+                
+                renderLeads();
+            } else if (tab === 'blog') {
+                title.textContent = "Blog";
+                subtitle.textContent = "Crie, edite e publique novos conteúdos científicos e novidades diretamente no Blog.";
+                
+                btnLeads.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/50 hover:text-white hover:bg-white/5";
+                btnBlog.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-white/10 text-white shadow-sm";
+                btnEditor.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/50 hover:text-white hover:bg-white/5";
+                
+                contentLeads.classList.add('hidden');
+                contentBlog.classList.remove('hidden');
+                contentBlogEditor.classList.add('hidden');
+                contentEditor.classList.add('hidden');
+                
+                renderBlogArticles();
+            } else if (tab === 'editor') {
+                title.textContent = "Editar Site";
+                subtitle.textContent = "Gerencie de forma simples a aparência do banner do site e depoimentos de clientes.";
+                
+                btnLeads.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/50 hover:text-white hover:bg-white/5";
+                btnBlog.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/50 hover:text-white hover:bg-white/5";
+                btnEditor.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-white/10 text-white shadow-sm";
+                
+                contentLeads.classList.add('hidden');
+                contentBlog.classList.add('hidden');
+                contentBlogEditor.classList.add('hidden');
+                contentEditor.classList.remove('hidden');
+                
+                loadHeroData();
+                renderTestimonials();
+            }
+        }
+
+        // Supabase Dynamic Client integration
+        let supabase = null;
+        let isSupabaseConfigured = () => false;
+        let currentLeadsList = [];
+
+        import('./assets/js/supabase-client.js')
+            .then(async module => {
+                supabase = module.supabase;
+                isSupabaseConfigured = module.isSupabaseConfigured;
+                
+                if (isSupabaseConfigured()) {
+                    try {
+                        const { data: { session }, error } = await supabase.auth.getSession();
+                        if (error || !session || !(await module.isEmailAuthorized(session.user?.email))) {
+                            console.warn("Sessão inválida ou e-mail não autorizado no Supabase. Redirecionando.");
+                            localStorage.removeItem('dentalab_admin_authenticated');
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                    } catch (err) {
+                        console.error("Falha ao validar sessão do Supabase:", err);
+                    }
+                    // Recarrega os leads se estiver autenticado e configurado
+                    renderLeads();
+                }
+            })
+            .catch(err => {
+                console.warn("Supabase client não pôde ser carregado:", err);
+            });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('dentalab_admin_authenticated');
+            window.location.href = 'login.html';
+        }
+
+        // HTML Sanitizer to prevent XSS attacks
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Render Leads list
+        async function renderLeads() {
+            const tableBody = document.getElementById('leads-table-body');
+            const emptyState = document.getElementById('leads-empty-state');
+            currentLeadsList = [];
+
+            if (isSupabaseConfigured() && supabase) {
+                try {
+                    const { data, error } = await supabase
+                        .from('leads')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) {
+                        console.error("Erro ao carregar leads do Supabase:", error);
+                        // Fallback para localStorage em caso de erro na query
+                        loadLeadsFromLocalStorage();
+                    } else {
+                        currentLeadsList = data.map(item => ({
+                            id: item.id,
+                            name: item.name,
+                            cro: item.cro,
+                            email: item.email,
+                            phone: item.phone,
+                            message: item.message,
+                            date: new Date(item.created_at).toLocaleString('pt-BR'),
+                            contacted: item.contacted
+                        }));
+                    }
+                } catch (err) {
+                    console.error("Falha na chamada ao Supabase:", err);
+                    loadLeadsFromLocalStorage();
+                }
+            } else {
+                loadLeadsFromLocalStorage();
+            }
+
+            function loadLeadsFromLocalStorage() {
+                try {
+                    const localLeads = JSON.parse(localStorage.getItem('dentalab_leads') || '[]');
+                    currentLeadsList = localLeads;
+                } catch (e) {
+                    console.error("Erro ao ler leads do localStorage:", e);
+                    currentLeadsList = [];
+                }
+            }
+
+            if(currentLeadsList.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            tableBody.innerHTML = currentLeadsList.map((lead, index) => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-5 text-xs text-secondary font-medium whitespace-nowrap">${escapeHTML(lead.date || 'Recente')}</td>
+                    <td class="p-5 font-bold whitespace-nowrap">
+                        <p class="text-primary font-bold">${escapeHTML(lead.name)}</p>
+                        <p class="text-xs text-secondary font-medium">${escapeHTML(lead.cro)}</p>
+                    </td>
+                    <td class="p-5 whitespace-nowrap">
+                        <p class="text-xs font-semibold text-primary">${escapeHTML(lead.email)}</p>
+                        <p class="text-xs text-secondary font-medium">${escapeHTML(lead.phone)}</p>
+                    </td>
+                    <td class="p-5 max-w-[300px]">
+                        <p class="text-xs text-on-surface-variant font-medium line-clamp-2" title="${escapeHTML(lead.message)}">${escapeHTML(lead.message)}</p>
+                    </td>
+                    <td class="p-5 text-right space-x-2 whitespace-nowrap">
+                        <button onclick="toggleLeadStatus(${index})" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                            lead.contacted 
+                            ? 'bg-emerald-100 text-emerald-800' 
+                            : 'bg-primary/5 hover:bg-primary/10 text-primary'
+                        }">
+                            ${lead.contacted ? 'Respondido' : 'Marcar Respondido'}
+                        </button>
+                        <button onclick="deleteLead(${index})" class="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors inline-flex items-center">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Toggle contacted status
+        window.toggleLeadStatus = async function(index) {
+            const lead = currentLeadsList[index];
+            if (!lead) return;
+
+            if (isSupabaseConfigured() && supabase && lead.id) {
+                try {
+                    const { error } = await supabase
+                        .from('leads')
+                        .update({ contacted: !lead.contacted })
+                        .eq('id', lead.id);
+
+                    if (error) {
+                        console.error("Erro ao atualizar status no Supabase:", error);
+                        showToast("Erro ao atualizar status no banco.");
+                    } else {
+                        renderLeads();
+                        showToast("Status do lead atualizado!");
+                    }
+                } catch (err) {
+                    console.error("Erro de rede ao atualizar lead:", err);
+                    showToast("Erro de rede ao atualizar.");
+                }
+            } else {
+                // Atualiza no localStorage
+                try {
+                    const leads = JSON.parse(localStorage.getItem('dentalab_leads') || '[]');
+                    if (leads[index]) {
+                        leads[index].contacted = !leads[index].contacted;
+                        localStorage.setItem('dentalab_leads', JSON.stringify(leads));
+                        renderLeads();
+                        showToast("Status do lead atualizado localmente!");
+                    }
+                } catch (e) {
+                    console.error("Erro ao atualizar status local:", e);
+                    showToast("Erro ao atualizar status.");
+                }
+            }
+        };
+
+        // Delete lead
+        window.deleteLead = async function(index) {
+            const lead = currentLeadsList[index];
+            if (!lead) return;
+
+            if(confirm("Tem certeza que deseja excluir esse lead permanentemente?")) {
+                if (isSupabaseConfigured() && supabase && lead.id) {
+                    try {
+                        const { error } = await supabase
+                            .from('leads')
+                            .delete()
+                            .eq('id', lead.id);
+
+                        if (error) {
+                            console.error("Erro ao excluir lead no Supabase:", error);
+                            showToast("Erro ao excluir lead no banco.");
+                        } else {
+                            renderLeads();
+                            showToast("Lead removido com sucesso!");
+                        }
+                    } catch (err) {
+                        console.error("Erro de rede ao excluir lead:", err);
+                        showToast("Erro de rede ao excluir.");
+                    }
+                } else {
+                    // Remove do localStorage
+                    try {
+                        const leads = JSON.parse(localStorage.getItem('dentalab_leads') || '[]');
+                        leads.splice(index, 1);
+                        localStorage.setItem('dentalab_leads', JSON.stringify(leads));
+                        renderLeads();
+                        showToast("Lead removido localmente!");
+                    } catch (e) {
+                        console.error("Erro ao remover lead local:", e);
+                        showToast("Erro ao remover lead.");
+                    }
+                }
+            }
+        };
+
+        // Category map for readable categories
+        const categoryMap = {
+            implantodontia: 'Implantodontia',
+            protese: 'Prótese Dentária',
+            fluxo: 'Fluxo Digital',
+            estetica: 'Zircônia e Estética',
+            planejamento: 'Planejamento Protético',
+            tendencias: 'Tendências da Odontologia'
+        };
+
+        // State for editing articles
+        let editingArticleIndex = null;
+
+        const defaultArticles = [
+            {
+                title: "O Futuro da Moldagem: Como o Fluxo Digital está Redefinindo a Precisão",
+                category: "fluxo",
+                readtime: "6 min de leitura",
+                image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+                summary: "Descubra como as novas tecnologias de escaneamento intraoral e impressão 3D estão eliminando erros manuais e garantindo adaptações marginais perfeitas em próteses fixas.",
+                content: "O avanço vertiginoso da odontologia digital trouxe uma revolução sem precedentes para clínicas e laboratórios.\n\nA transição da moldagem convencional com alginato ou silicone para o escaneamento intraoral elimina uma das maiores fontes de distorções e desconforto para o paciente.\n\nCom arquivos digitais enviados instantaneamente ao laboratório, o tempo de produção é reduzido pela metade, e a fidelidade aos tecidos moles e dentes preparados atinge margens de precisão micrométricas, garantindo próteses perfeitamente adaptadas e com necessidade mínima de ajustes clínicos.",
+                date: "01/06/2026"
+            },
+            {
+                title: "Zircônia Multilayer: A Revolução da Estética e Resistência",
+                category: "estetica",
+                readtime: "5 min de leitura",
+                image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCKn_QH7fc-Ma5PbUDxPweV84-VsmX7d90m25wxarupiCx0oZa1K2CiiUBcxeZbG6mXonpfGMRlTTG-iUQY87rDyIlhGnEyp5JtqB5WaVCAaIH9zXPdA1PLlsMzqQWVt6ZnLcwPV8FV7InXU9o3RZT8EYxSQ2HAi2rJ48q4cN_prb30T2nQ-UEv-vhus6vX8bU8QEiykua951-4BunNcSxIBeR0zBDmfHpoDu_h4FWWX5dCJblhgmxq1X9PGytgLiF5owtIw45rVX8",
+                summary: "Entenda por que a zircônia de última geração se tornou a escolha número um para reabilitações extensas.",
+                content: "A busca pelo equilíbrio entre translucidez natural e alta resistência mecânica encontrou seu ápice na zircônia multilayer.\n\nAntigamente, as próteses de zircônia eram criticadas pelo visual excessivamente opaco, necessitando de aplicação manual de cerâmica que corria o risco de lascamento (chipping).\n\nHoje, com os discos multicamadas com transição suave de cor e translucidez do colo à borda incisal, conseguimos fresar próteses monolíticas extremamente estéticas, capazes de resistir a cargas mastigatórias intensas na região posterior sem comprometer a beleza do sorriso.",
+                date: "28/05/2026"
+            },
+            {
+                title: "Comunicação Eficiente: O Segredo para o Sucesso Protético",
+                category: "planejamento",
+                readtime: "8 min de leitura",
+                image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+                summary: "Dicas práticas de como otimizar o envio de pedidos e fotos para garantir resultados previsíveis em cada caso.",
+                content: "O entrosamento clínico-laboratorial é o principal pilar para evitar retrabalhos.\n\nA comunicação digital facilitou o envio de fotografias de alta resolução, registros de mordida e mapeamento de cor.\n\nCompartilhar fotos com escalas de cor neutras ao lado do dente homólogo ajuda a calibrar a iluminação do laboratório. Além disso, descrições detalhadas da expectativa do paciente e fotos de face inteira permitem ao técnico planejar a morfologia dos dentes em harmonia com a face do paciente.",
+                date: "24/05/2026",
+                isHandshake: true
+            },
+            {
+                title: "Próteses Sobre Implantes: Estabilidade e Adaptação Marginais",
+                category: "implantodontia",
+                readtime: "12 min de leitura",
+                image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCdAuVJb9xgRM8JaKQdlfUhAsUScVYP-f_cvUFJYZ1e6GJlelINAwyLKJkr1eOk-iVKIBuhwDLrcgVmNullz0tHsW4g8B65XlRpY6iSrXwEQZA2wks1Ywiz8KGUQkf3yPhMJ1-9mmUWnqNtzqu053vr1WUDhQJ7fDL7wQH7nGipYkB3ZsQDR2DdtLNPcCVfcUhYBZ4ks6IMaY5kFaHewqCWZBmbXu008KZy3KQ2GiE4MpbiwgIlEGBmrrs_XJvYqrsPUd6ya-G5KYg",
+                summary: "Um guia completo sobre como a fresagem CAD/CAM melhora o ajuste passivo de próteses fixas e protocols sobre implantes no dia a dia clínico.",
+                content: "A longevidade dos implantes está diretamente associada ao ajuste passivo da estrutura protética.\n\nQualquer tensão transmitida aos implantes devido a imprecisões na fundição convencional pode causar reabsorção óssea marginal ou fadiga dos parafusos.\n\nA tecnologia CAD/CAM nos permite fresar barras e infraestruturas metálicas ou de zircônia a partir de blocos homogêneos industriais, garantindo que o encaixe final seja livre de tensões microscópicas e proteja a osseointegração no longo prazo.",
+                date: "20/05/2026"
+            },
+            {
+                title: "A Importância da Seleção do Cimento em Restaurações de Zircônia",
+                category: "planejamento",
+                readtime: "7 min de leitura",
+                image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+                summary: "Escolher o cimento resinoso correto e fazer o pré-tratamento ideal da peça são passos críticos para o sucesso da cimentação adesiva.",
+                content: "A cimentação da zircônia exige cuidados específicos, visto que ela não é condicionável por ácido fluorídrico como as cerâmicas vítreas.\n\nO uso de jato de óxido de alumínio em baixa pressão combinado com primer contendo monômero MDP é o padrão-ouro para obter adesão química estável.\n\nUtilizar cimentos resinosos autoadesivos ou cimentos convencionais com MDP garante excelente retenção física e química a longo prazo, evitando solturas indesejadas das coroas.",
+                date: "15/05/2026"
+            },
+            {
+                title: "Impressão 3D de Modelos: Precisão no Laboratório Moderno",
+                category: "fluxo",
+                readtime: "6 min de leitura",
+                image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+                summary: "A evolução das resinas 3D e o impacto do pós-processamento correto na estabilidade dimensional de modelos para prótese.",
+                content: "A impressão 3D revolucionou o diagnóstico e o planejamento protético.\n\nPara que os modelos impressos substituam o gesso clássico sem perder fidelidade, a calibração das impressoras de resina LCD/SLA e o processo adequado de lavagem em álcool isopropílico e cura UV final são fundamentais.\n\nQualquer variação nesses passos pode induzir contração volumétrica na resina, impactando negativamente na adaptação de copings e pilares protéticos confeccionados sobre esses modelos.",
+                date: "10/05/2026"
+            },
+            {
+                title: "Tendências em Odontologia Estética: O Espaço da Lente de Contato Ultrassutil",
+                category: "tendencias",
+                readtime: "9 min de leitura",
+                image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCKn_QH7fc-Ma5PbUDxPweV84-VsmX7d90m25wxarupiCx0oZa1K2CiiUBcxeZbG6mXonpfGMRlTTG-iUQY87rDyIlhGnEyp5JtqB5WaVCAaIH9zXPdA1PLlsMzqQWVt6ZnLcwPV8FV7InXU9o3RZT8EYxSQ2HAi2rJ48q4cN_prb30T2nQ-UEv-vhus6vX8bU8QEiykua951-4BunNcSxIBeR0zBDmfHpoDu_h4FWWX5dCJblhgmxq1X9PGytgLiF5owtIw45rVX8",
+                summary: "A tendência global dos sorrisos naturais e como os laboratórios estão respondendo com laminados cerâmicos ultrafinos sem desgaste dentário.",
+                content: "Os tempos de dentes artificialmente brancos e planos estão dando lugar a sorrisos com texturas naturais, nuances e anatomia real.\n\nCom cerâmicas de silicato de lítio reforçadas por zircônia, conseguimos confeccionar laminados com espessuras de até 0.2 mm.\n\nEssas lentes ultrafinas exigem mínimo ou nenhum preparo biológico, preservando o esmalte saudável e proporcionando a translucidez ideal para mimetizar a estrutura dentária natural.",
+                date: "05/05/2026"
+            },
+            {
+                title: "Scanner de Bancada vs. Scanner Intraoral: Qual a Diferença na Prática?",
+                category: "tendencias",
+                readtime: "8 min de leitura",
+                image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+                summary: "Análise comparativa das tecnologias de digitalização óptica e suas aplicações específicas nos consultórios e laboratórios.",
+                content: "Embora o scanner intraoral atue diretamente na boca do paciente, o scanner de bancada é a ferramenta vital do técnico de laboratório.\n\nO scanner de bancada oferece maior precisão absoluta e velocidade para digitalizar modelos de gesso inteiros e troquéis múltiplos.\n\nJá o scanner intraoral destaca-se pela conveniência clínica, eliminando o gesso por completo e acelerando a comunicação direta de novos casos para início imediato do design digital.",
+                date: "01/05/2026"
+            }
+        ];
+
+        // Seed default articles if localStorage is empty
+        try {
+            const storedArticles = localStorage.getItem('dentalab_blog_articles');
+            if (!storedArticles || JSON.parse(storedArticles).length === 0) {
+                localStorage.setItem('dentalab_blog_articles', JSON.stringify(defaultArticles));
+            }
+        } catch (e) {
+            console.error("Erro ao gerenciar seed de artigos no dashboard:", e);
+        }
+
+
+
+        // Helper to check if a date is in the future
+        function isFutureDate(dateStr) {
+            if (!dateStr) return false;
+            let checkDate;
+            if (dateStr.includes('-')) {
+                checkDate = new Date(dateStr + 'T00:00:00');
+            } else {
+                const [day, month, year] = dateStr.split('/');
+                checkDate = new Date(`${year}-${month}-${day}T00:00:00`);
+            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return checkDate > today;
+        }
+
+        // Helper to format date as DD/MM/YYYY
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            if (dateStr.includes('-')) {
+                const [year, month, day] = dateStr.split('-');
+                return `${day}/${month}/${year}`;
+            }
+            return dateStr;
+        }
+
+        // Open Full-Page Editor
+        window.openBlogModal = function() {
+            const blogList = document.getElementById('content-blog');
+            const blogEditor = document.getElementById('content-blog-editor');
+            const sectionSubtitle = document.getElementById('section-subtitle');
+            
+            if (editingArticleIndex === null) {
+                // Set date default to today in YYYY-MM-DD
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('cms-date').value = today;
+                document.getElementById('cms-hasfooter').checked = true;
+                
+                // Set default titles
+                document.getElementById('cms-form-title').innerHTML = `<span class="material-symbols-outlined text-primary">post_add</span> Publicar Novo Artigo`;
+                document.getElementById('cms-submit-btn').textContent = "Publicar Artigo";
+                sectionSubtitle.textContent = "Preencha as informações abaixo para criar e publicar um novo artigo no blog.";
+            } else {
+                sectionSubtitle.textContent = "Edite as informações abaixo e clique em salvar para atualizar o artigo.";
+            }
+
+            // Sync metrics analysis panel on open
+            updateSEOMetrics();
+            renderGalleryPresets();
+
+            blogList.classList.add('hidden');
+            blogEditor.classList.remove('hidden');
+            
+            // Scroll to top of page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Close Full-Page Editor
+        window.closeBlogModal = function() {
+            const blogList = document.getElementById('content-blog');
+            const blogEditor = document.getElementById('content-blog-editor');
+            const sectionSubtitle = document.getElementById('section-subtitle');
+            
+            blogEditor.classList.add('hidden');
+            blogList.classList.remove('hidden');
+            sectionSubtitle.textContent = "Crie, edite e publique novos conteúdos científicos e novidades diretamente no Blog.";
+            
+            // Clean state if cancel button clicked
+            setTimeout(() => {
+                editingArticleIndex = null;
+                document.getElementById('cms-blog-form').reset();
+                document.getElementById('cms-hasfooter').checked = true;
+                
+                // Reset collapsible gallery state
+                galleryOpen = false;
+                const content = document.getElementById('gallery-collapsible-content');
+                const chevron = document.getElementById('gallery-chevron');
+                if (content) content.classList.add('hidden');
+                if (chevron) chevron.classList.remove('rotate-180');
+                
+                updateSEOMetrics();
+            }, 100);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function parseDate(dateStr) {
+            if (!dateStr) return new Date(0);
+            if (dateStr.includes('-')) {
+                return new Date(dateStr + 'T00:00:00');
+            } else {
+                const [day, month, year] = dateStr.split('/');
+                return new Date(`${year}-${month}-${day}T00:00:00`);
+            }
+        }
+
+        // Helper to calculate reading time dynamically (based on exact word-count table)
+        function getReadingTime(content) {
+            if (!content) return "1 min de leitura";
+            const words = content.trim().split(/\s+/).length;
+            if (words <= 200) return "1 min de leitura";
+            if (words <= 400) return "2 min de leitura";
+            if (words <= 600) return "3 min de leitura";
+            if (words <= 800) return "4 min de leitura";
+            if (words <= 1000) return "5 min de leitura";
+            if (words <= 1200) return "6 min de leitura";
+            if (words <= 1400) return "7 min de leitura";
+            if (words <= 1600) return "8 min de leitura";
+            if (words <= 1800) return "9 min de leitura";
+            if (words <= 2000) return "10 min de leitura";
+            return "+10 min de leitura";
+        }
+
+        // Render Blog Articles inside Dashboard Table
+        function renderBlogArticles() {
+            const tableBody = document.getElementById('cms-blog-table-body');
+            const emptyState = document.getElementById('blog-empty-state');
+            const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+
+            if(articles.length === 0) {
+                tableBody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            const mappedArticles = articles.map((article, index) => ({ ...article, originalIndex: index }));
+            mappedArticles.sort((a, b) => parseDate(b.date) - parseDate(a.date));
+
+            tableBody.innerHTML = mappedArticles.map((article) => {
+                const index = article.originalIndex;
+                const scheduled = isFutureDate(article.date);
+                const readableDate = formatDate(article.date);
+                
+                // Status Pill
+                const statusPill = scheduled
+                    ? `<span class="px-2.5 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-lg uppercase tracking-wider inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Agendado (${readableDate})</span>`
+                    : `<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-lg uppercase tracking-wider inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Publicado (${readableDate})</span>`;
+
+                // Article Thumbnail image
+                const thumbImg = article.image 
+                    ? `<img src="${article.image}" class="w-11 h-11 rounded-xl object-cover shadow-sm border border-slate-100" />`
+                    : `<div class="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><span class="material-symbols-outlined text-lg">image</span></div>`;
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-5 font-semibold cursor-pointer" onclick="editArticle(${index})">
+                            <div class="flex items-center gap-3">
+                                ${thumbImg}
+                                <div>
+                                    <p class="text-primary font-bold line-clamp-1 hover:text-blue-700 transition-colors">${article.title}</p>
+                                    <p class="text-xs text-secondary font-medium line-clamp-1">${article.summary}</p>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="p-5 whitespace-nowrap">${statusPill}</td>
+                        <td class="p-5 text-xs text-secondary font-semibold whitespace-nowrap">${getReadingTime(article.content)}</td>
+                        <td class="p-5 text-right space-x-1 whitespace-nowrap">
+                            <button onclick="editArticle(${index})" class="text-primary hover:text-blue-750 p-2 rounded-lg hover:bg-primary/5 transition-colors inline-flex items-center" title="Editar Artigo">
+                                <span class="material-symbols-outlined text-lg">edit</span>
+                            </button>
+                            <button onclick="deleteArticle(${index})" class="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors inline-flex items-center" title="Excluir Artigo">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Load article for editing
+        window.editArticle = function(index) {
+            const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+            const article = articles[index];
+            if (!article) return;
+
+            editingArticleIndex = index;
+
+            // Populate form
+            document.getElementById('cms-title').value = article.title;
+            document.getElementById('cms-image').value = article.image || '';
+            document.getElementById('cms-image-alt').value = article.imageAlt || article.title;
+            document.getElementById('cms-content').value = article.content;
+            document.getElementById('cms-hasfooter').checked = article.hasFooter !== false;
+
+            // Date processing for input type="date" (expects YYYY-MM-DD)
+            let dateVal = article.date || '';
+            if (dateVal && dateVal.includes('/')) {
+                const [day, month, year] = dateVal.split('/');
+                dateVal = `${year}-${month}-${day}`;
+            }
+            document.getElementById('cms-date').value = dateVal;
+
+            // Trigger SEO Metrics update for loaded content
+            updateSEOMetrics();
+            renderGalleryPresets();
+
+            // Update UI elements
+            document.getElementById('cms-form-title').innerHTML = `<span class="material-symbols-outlined text-primary">edit_note</span> Editar Artigo <span class="text-xs font-semibold px-2 py-0.5 bg-blue-100 text-blue-800 rounded-md ml-2">Post #${index}</span>`;
+            document.getElementById('cms-submit-btn').textContent = "Salvar Alterações";
+
+            // Open Editor
+            openBlogModal();
+            showToast("Artigo carregado para edição!");
+        };
+
+        // Delete article
+        window.deleteArticle = function(index) {
+            if(confirm("Tem certeza que deseja remover este artigo do Blog do site?")) {
+                try {
+                    const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+                    articles.splice(index, 1);
+                    localStorage.setItem('dentalab_blog_articles', JSON.stringify(articles));
+                    
+                    // If the deleted article was currently being edited, cancel edit mode
+                    if (editingArticleIndex === index) {
+                        editingArticleIndex = null;
+                    } else if (editingArticleIndex !== null && editingArticleIndex > index) {
+                        // Adjust index if we deleted an item before the edited item
+                        editingArticleIndex--;
+                    }
+
+                    renderBlogArticles();
+                    showToast("Artigo removido com sucesso!");
+                } catch (e) {
+                    console.error("Erro ao remover artigo:", e);
+                    showToast("Erro ao remover artigo.");
+                }
+            }
+        };
+
+        // Submit CMS Blog Form
+        const blogForm = document.getElementById('cms-blog-form');
+        blogForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+            
+            const contentText = document.getElementById('cms-content').value.trim();
+            const words = contentText.split(/\s+/).filter(Boolean).length;
+            const readingMin = Math.max(1, Math.ceil(words / 200));
+            const readtimeText = `${readingMin} min de leitura`;
+            
+            const summaryText = contentText.length > 160 ? contentText.substring(0, 157) + '...' : contentText;
+
+            const articleData = {
+                title: document.getElementById('cms-title').value.trim(),
+                category: editingArticleIndex !== null ? (articles[editingArticleIndex].category || 'geral') : 'geral',
+                readtime: readtimeText,
+                image: document.getElementById('cms-image').value.trim(),
+                imageAlt: document.getElementById('cms-image-alt').value.trim(),
+                summary: summaryText,
+                content: contentText,
+                date: document.getElementById('cms-date').value, // Storing YYYY-MM-DD
+                hasFooter: document.getElementById('cms-hasfooter').checked
+            };
+
+            try {
+                if (editingArticleIndex !== null) {
+                    // Update existing article
+                    articles[editingArticleIndex] = articleData;
+                    showToast("Artigo atualizado com sucesso no Blog!");
+                } else {
+                    // Add new article at the beginning
+                    articles.unshift(articleData);
+                    showToast("Artigo publicado com sucesso no Blog!");
+                }
+
+                // Limit to 100 articles to avoid exceeding localStorage quota
+                if (articles.length > 100) {
+                    articles.splice(100);
+                }
+
+                localStorage.setItem('dentalab_blog_articles', JSON.stringify(articles));
+            } catch (e) {
+                console.error("Erro ao salvar artigo no localStorage:", e);
+                showToast("Erro ao salvar o artigo. O limite de armazenamento pode ter sido excedido.");
+            }
+            
+            // Save image to gallery database if checked
+            try {
+                const saveToGalleryChecked = document.getElementById('cms-save-to-gallery').checked;
+                const imageUrl = document.getElementById('cms-image').value.trim();
+                const imageAltText = document.getElementById('cms-image-alt').value.trim();
+
+                if (saveToGalleryChecked && imageUrl) {
+                    const presets = getGalleryPresets();
+                    if (!presets.some(p => p.url === imageUrl)) {
+                        presets.push({
+                            name: document.getElementById('cms-title').value.trim().substring(0, 20) || "Imagem Custom",
+                            url: imageUrl,
+                            alt: imageAltText || "Imagem personalizada"
+                        });
+                        saveGalleryPresets(presets);
+                    }
+                    // Reset checkbox
+                    document.getElementById('cms-save-to-gallery').checked = false;
+                }
+            } catch (err) {
+                console.error("Erro ao salvar imagem na galeria local:", err);
+            }
+            
+            // Close modal & refresh list
+            closeBlogModal();
+            renderBlogArticles();
+        });
+
+        // Real-Time SEO and Word/Paragraph Analyzer
+        function updateSEOMetrics() {
+            const textarea = document.getElementById('cms-content');
+            if (!textarea) return;
+            
+            const text = textarea.value;
+            
+            // Words count
+            const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            
+            // Paragraphs count
+            const paragraphs = text.split('\n').filter(p => p.trim() !== '').length;
+            
+            document.getElementById('seo-word-count').textContent = words;
+            document.getElementById('seo-paragraph-count').textContent = paragraphs;
+            
+            const progressBar = document.getElementById('seo-progress-bar');
+            const scoreText = document.getElementById('seo-score-text');
+            const adviceText = document.getElementById('seo-advice-text');
+            
+            if (words === 0) {
+                progressBar.className = "bg-slate-200 h-full w-[5%] transition-all duration-300";
+                scoreText.className = "text-slate-400 font-bold";
+                scoreText.textContent = "Vazio";
+                adviceText.textContent = "Comece a digitar o conteúdo do artigo para analisar a qualidade de SEO.";
+            } else if (words < 300) {
+                progressBar.className = "bg-red-500 h-full w-[25%] transition-all duration-300";
+                scoreText.className = "text-red-500 font-bold";
+                scoreText.textContent = "Muito Curto";
+                adviceText.textContent = "O texto está curto para rankear no Google. Escreva pelo menos 300 palavras (atual: " + words + ").";
+            } else if (words < 600) {
+                progressBar.className = "bg-amber-500 h-full w-[60%] transition-all duration-300";
+                scoreText.className = "text-amber-500 font-bold";
+                scoreText.textContent = "Aceitável";
+                adviceText.textContent = "Tamanho bom! Continue escrevendo para alcançar 600+ palavras e atingir a meta ideal.";
+            } else if (words <= 1500) {
+                progressBar.className = "bg-emerald-500 h-full w-[100%] transition-all duration-300";
+                scoreText.className = "text-emerald-500 font-bold";
+                scoreText.textContent = "Excelente (Ideal)";
+                adviceText.textContent = "Excelente! Artigo com extensão ideal para leitura, mecanismos de busca e robôs de IA.";
+            } else {
+                progressBar.className = "bg-blue-500 h-full w-[100%] transition-all duration-300";
+                scoreText.className = "text-blue-500 font-bold";
+                scoreText.textContent = "Extenso";
+                adviceText.textContent = "Post super completo! Certifique-se de dividir o texto com subtítulos claros para manter a leitura agradável.";
+            }
+
+            // Append paragraph recommendations dynamically to the advice text
+            if (words > 0) {
+                if (paragraphs < 6) {
+                    adviceText.textContent += " Dica: Tente dividir mais as ideias (ideal de 6 a 12 parágrafos).";
+                } else if (paragraphs > 16) {
+                    adviceText.textContent += " Dica: Muitos parágrafos curtos detectados, consolide ideias semelhantes.";
+                } else {
+                    adviceText.textContent += " Quantidade de parágrafos equilibrada (" + paragraphs + ").";
+                }
+            }
+        }
+
+        // Bind input listener to textarea
+        const textareaEl = document.getElementById('cms-content');
+        if (textareaEl) {
+            textareaEl.addEventListener('input', updateSEOMetrics);
+        }
+
+        // Export helper to window scope for other callbacks
+        window.updateSEOMetrics = updateSEOMetrics;
+
+        // Toast Alert Helper
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `flex items-center gap-3 px-6 py-4 rounded-2xl bg-primary text-white border border-white/10 shadow-2xl pointer-events-auto transform translate-y-4 opacity-0 transition-all duration-300`;
+            
+            toast.innerHTML = `
+                <span class="material-symbols-outlined text-emerald-400">check_circle</span>
+                <span class="font-medium text-xs tracking-wide">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Collapsible Gallery State
+        let galleryOpen = false;
+        window.toggleGallery = function() {
+            const content = document.getElementById('gallery-collapsible-content');
+            const chevron = document.getElementById('gallery-chevron');
+            galleryOpen = !galleryOpen;
+            if (galleryOpen) {
+                content.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+                renderGalleryPresets();
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        };
+
+        // Dynamic Local Gallery Presets Management
+        function getGalleryPresets() {
+            try {
+                let presets = localStorage.getItem('dentalab_gallery_presets');
+                if (!presets) {
+                    presets = '[]';
+                    localStorage.setItem('dentalab_gallery_presets', presets);
+                }
+                return JSON.parse(presets);
+            } catch (e) {
+                console.error("Erro ao ler gallery presets:", e);
+                return [];
+            }
+        }
+
+        function saveGalleryPresets(presets) {
+            try {
+                localStorage.setItem('dentalab_gallery_presets', JSON.stringify(presets));
+            } catch (e) {
+                console.error("Erro ao salvar gallery presets:", e);
+            }
+        }
+
+        function renderGalleryPresets() {
+            const container = document.getElementById('image-gallery-presets');
+            if (!container) return;
+            
+            const currentValue = document.getElementById('cms-image').value.trim();
+            const presets = getGalleryPresets();
+            
+            if (presets.length === 0) {
+                container.className = "col-span-full py-8 text-center text-xs text-slate-400 font-medium";
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-4">
+                        <span class="material-symbols-outlined text-[32px] text-slate-300 mb-2">image_search</span>
+                        <p class="text-slate-400">Galeria vazia. Cole links no editor e marque "Salvar esta imagem" ou use "Adicionar em Lote"!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.className = "grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[300px] overflow-y-auto pr-1";
+            container.innerHTML = presets.map((preset, index) => {
+                const isActive = currentValue === preset.url;
+                const activeClasses = isActive 
+                    ? 'border-2 border-primary ring-2 ring-primary/20 scale-[0.98]' 
+                    : 'border border-slate-200 opacity-80 hover:opacity-100';
+                
+                return `
+                    <div class="relative group aspect-video rounded-xl overflow-hidden shadow-sm transition-all duration-200 ${activeClasses}" title="${preset.name}">
+                        <img onclick="selectGalleryPreset('${preset.url}', '${preset.alt.replace(/'/g, "\\'")}')" src="${preset.url}" alt="${preset.name}" class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105" />
+                        <div class="absolute inset-x-0 bottom-0 bg-primary/75 backdrop-blur-[2px] py-1 px-2 text-center pointer-events-none">
+                            <span class="text-[9px] font-bold text-white tracking-wide">${preset.name}</span>
+                        </div>
+                        ${isActive ? `
+                            <div class="absolute top-1 right-1 bg-primary text-white w-5 h-5 rounded-full flex items-center justify-center shadow-md pointer-events-none">
+                                <span class="material-symbols-outlined text-[10px] font-bold">check</span>
+                            </div>
+                        ` : ''}
+                        <button type="button" onclick="deleteGalleryPreset(${index})" class="absolute top-1 left-1 bg-red-500 hover:bg-red-600 text-white w-5 h-5 rounded-full flex items-center justify-center shadow-md transition-colors opacity-0 group-hover:opacity-100" title="Remover da Galeria">
+                            <span class="material-symbols-outlined text-[10px] font-bold">close</span>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.selectGalleryPreset = function(url, altText) {
+            document.getElementById('cms-image').value = url;
+            document.getElementById('cms-image-alt').value = altText;
+            renderGalleryPresets();
+            showToast("Imagem da galeria selecionada!");
+        };
+
+        window.syncGallerySelection = function() {
+            renderGalleryPresets();
+        };
+
+        // Bulk Import toggle & processing
+        window.toggleBulkImportForm = function() {
+            const form = document.getElementById('bulk-import-form');
+            form.classList.toggle('hidden');
+            if (!form.classList.contains('hidden')) {
+                document.getElementById('bulk-urls-input').focus();
+            }
+        };
+
+        window.clearGalleryDatabase = function() {
+            if (confirm("Tem certeza de que deseja limpar todas as imagens da galeria de presets?")) {
+                saveGalleryPresets([]);
+                renderGalleryPresets();
+                showToast("Galeria de presets limpa!");
+            }
+        };
+
+        window.processBulkImport = function() {
+            const textarea = document.getElementById('bulk-urls-input');
+            const urlsText = textarea.value.trim();
+            if (!urlsText) {
+                alert("Por favor, insira pelo menos um link de imagem.");
+                return;
+            }
+
+            const urls = urlsText.split('\n').map(u => u.trim()).filter(u => u.startsWith('http'));
+            if (urls.length === 0) {
+                alert("Nenhum link válido (iniciando com http/https) encontrado.");
+                return;
+            }
+
+            const presets = getGalleryPresets();
+            let addedCount = 0;
+
+            urls.forEach(url => {
+                if (!presets.some(p => p.url === url)) {
+                    let name = "Imagem importada";
+                    try {
+                        const parsed = new URL(url);
+                        if (parsed.hostname.includes('unsplash.com')) {
+                            const idMatch = parsed.pathname.match(/photo-([a-zA-Z0-9-]+)/);
+                            name = idMatch ? `Unsplash ID: ${idMatch[1].substring(0, 8)}` : "Unsplash Import";
+                        } else if (parsed.hostname.includes('pexels.com')) {
+                            const idMatch = parsed.pathname.match(/photos\/([0-9]+)/);
+                            name = idMatch ? `Pexels ID: ${idMatch[1]}` : "Pexels Import";
+                        } else {
+                            name = parsed.hostname.replace('www.', '').split('.')[0];
+                            name = name.charAt(0).toUpperCase() + name.slice(1);
+                        }
+                    } catch (e) {}
+
+                    presets.push({
+                        name: name,
+                        url: url,
+                        alt: `Imagem importada de ${name}`
+                    });
+                    addedCount++;
+                }
+            });
+
+            saveGalleryPresets(presets);
+            textarea.value = '';
+            toggleBulkImportForm();
+            renderGalleryPresets();
+            showToast(`${addedCount} imagens importadas com sucesso!`);
+        };
+
+        window.deleteGalleryPreset = function(index) {
+            const presets = getGalleryPresets();
+            presets.splice(index, 1);
+            saveGalleryPresets(presets);
+            renderGalleryPresets();
+            showToast("Imagem removida da galeria!");
+        };
+
+        // Site Editor Logic
+        window.loadHeroData = function() {
+            try {
+                const defaultHero = {
+                    title: "Laboratório de Prótese Dentária com Precisão e Tecnologia",
+                    subtitle: "Parceiro estratégico de clínicas odontológicas na Grande São Paulo, Jundiaí e região. Oferecemos reabilitações completas em Zircônia, CAD/CAM e fluxo 100% digital com rapidez e excelência.",
+                    bg: "assets/images/lavorato_hero.png"
+                };
+                const heroData = JSON.parse(localStorage.getItem('dentalab_hero_data')) || defaultHero;
+                document.getElementById('editor-hero-title').value = heroData.title || '';
+                document.getElementById('editor-hero-subtitle').value = heroData.subtitle || '';
+                document.getElementById('editor-hero-bg').value = heroData.bg || '';
+            } catch (e) {
+                console.error("Erro ao carregar dados do Hero:", e);
+            }
+        };
+
+        const heroEditForm = document.getElementById('hero-edit-form');
+        if (heroEditForm) {
+            heroEditForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const heroData = {
+                    title: document.getElementById('editor-hero-title').value.trim(),
+                    subtitle: document.getElementById('editor-hero-subtitle').value.trim(),
+                    bg: document.getElementById('editor-hero-bg').value.trim()
+                };
+                try {
+                    localStorage.setItem('dentalab_hero_data', JSON.stringify(heroData));
+                    showToast("Banner principal (Hero) atualizado com sucesso!");
+                } catch (err) {
+                    console.error("Erro ao salvar Hero:", err);
+                    showToast("Erro ao salvar alterações.");
+                }
+            });
+        }
+
+        // Testimonials Management
+        const defaultTestimonialsList = [
+            {
+                stars: 5,
+                text: "São quase 10 anos de parceria, transformando sorrisos com excelência e sintonia. Um laboratório moderno e com muita dedicação. Parabéns a toda equipe Lavorato!",
+                image: "assets/images/depoimentos/DrArnaldoPfaff.jpg",
+                name: "Dr. Arnaldo Pfaff",
+                role: "Cirurgião Dentista"
+            },
+            {
+                stars: 5,
+                text: "Laboratório excelente, sempre executando as coroas de porcelana com muita atenção e agilidade!",
+                image: "assets/images/depoimentos/DrTulioTateyama.jpg",
+                name: "Dr. Tulio Tateyama",
+                role: "Cirurgião Dentista"
+            },
+            {
+                stars: 5,
+                text: "Com 15 anos de experiência em prótese e implante, considero o Lavorato o melhor laboratório com que já trabalhei. Arnaldo é um profissional diferenciado e atencioso; Suely garante prazos e valores excelentes. Equipe e estrutura atualizadas com tecnologia de ponta, parceria indispensável.",
+                image: "assets/images/depoimentos/DrLucasJosedaSilvaSantos.png",
+                name: "Dr. Lucas José da Silva Santos",
+                role: "Implantodontia e reabilitação com implantes"
+            }
+        ];
+
+        window.getTestimonials = function() {
+            try {
+                let stored = localStorage.getItem('dentalab_testimonials');
+                if (!stored) {
+                    stored = JSON.stringify(defaultTestimonialsList);
+                    localStorage.setItem('dentalab_testimonials', stored);
+                }
+                return JSON.parse(stored);
+            } catch (e) {
+                console.error("Erro ao carregar depoimentos:", e);
+                return [];
+            }
+        };
+
+        window.saveTestimonials = function(list) {
+            try {
+                localStorage.setItem('dentalab_testimonials', JSON.stringify(list));
+            } catch (e) {
+                console.error("Erro ao salvar depoimentos:", e);
+            }
+        };
+
+        window.renderTestimonials = function() {
+            const container = document.getElementById('editor-testimonials-list');
+            if (!container) return;
+
+            const testimonials = window.getTestimonials();
+            if (testimonials.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-xs text-slate-400 font-medium">
+                        Nenhum depoimento cadastrado.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = testimonials.map((dep, index) => {
+                const imgTag = dep.image 
+                    ? `<img src="${dep.image}" class="w-10 h-10 rounded-full object-cover border border-slate-100 shadow-sm" />`
+                    : `<div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400"><span class="material-symbols-outlined text-base">person</span></div>`;
+                
+                return `
+                    <div class="py-4 flex justify-between items-start gap-4">
+                        <div class="flex gap-3">
+                            ${imgTag}
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-sm font-bold text-primary">${escapeHTML(dep.name)}</span>
+                                    <span class="text-[10px] text-slate-400 font-medium">${escapeHTML(dep.role)}</span>
+                                </div>
+                                <div class="flex gap-0.5 text-amber-400 my-1">
+                                    ${Array.from({ length: dep.stars || 5 }).map(() => `
+                                        <span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    `).join('')}
+                                </div>
+                                <p class="text-xs text-slate-500 line-clamp-2 italic leading-relaxed">"${escapeHTML(dep.text)}"</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-1 shrink-0">
+                            <button onclick="openTestimonialModal(${index})" class="text-primary hover:text-blue-750 p-1.5 rounded-lg hover:bg-primary/5 transition-colors inline-flex items-center" title="Editar">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                            <button onclick="deleteTestimonial(${index})" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg hover:bg-red-50 transition-colors inline-flex items-center" title="Excluir">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.openTestimonialModal = function(editIndex = null) {
+            const modal = document.getElementById('testimonial-modal');
+            const titleEl = document.getElementById('testimonial-modal-title');
+            const form = document.getElementById('testimonial-form');
+            form.reset();
+
+            if (editIndex !== null) {
+                titleEl.querySelector('span:last-child').textContent = "Editar Depoimento";
+                const testimonials = window.getTestimonials();
+                const dep = testimonials[editIndex];
+                if (dep) {
+                    document.getElementById('testimonial-edit-index').value = editIndex;
+                    document.getElementById('testimonial-name').value = dep.name;
+                    document.getElementById('testimonial-role').value = dep.role;
+                    document.getElementById('testimonial-stars').value = dep.stars || 5;
+                    document.getElementById('testimonial-image').value = dep.image || '';
+                    document.getElementById('testimonial-text').value = dep.text;
+                }
+            } else {
+                titleEl.querySelector('span:last-child').textContent = "Adicionar Depoimento";
+                document.getElementById('testimonial-edit-index').value = '';
+            }
+
+            modal.classList.remove('hidden');
+        };
+
+        window.closeTestimonialModal = function() {
+            document.getElementById('testimonial-modal').classList.add('hidden');
+        };
+
+        window.deleteTestimonial = function(index) {
+            if (confirm("Tem certeza que deseja excluir esse depoimento?")) {
+                const list = window.getTestimonials();
+                list.splice(index, 1);
+                window.saveTestimonials(list);
+                window.renderTestimonials();
+                showToast("Depoimento removido com sucesso!");
+            }
+        };
+
+        const testimonialForm = document.getElementById('testimonial-form');
+        if (testimonialForm) {
+            testimonialForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const indexVal = document.getElementById('testimonial-edit-index').value;
+                const name = document.getElementById('testimonial-name').value.trim();
+                const role = document.getElementById('testimonial-role').value.trim();
+                const stars = parseInt(document.getElementById('testimonial-stars').value);
+                const image = document.getElementById('testimonial-image').value.trim();
+                const text = document.getElementById('testimonial-text').value.trim();
+
+                const depData = { name, role, stars, image, text };
+                const list = window.getTestimonials();
+
+                if (indexVal !== '') {
+                    list[parseInt(indexVal)] = depData;
+                    showToast("Depoimento atualizado com sucesso!");
+                } else {
+                    list.push(depData);
+                    showToast("Depoimento adicionado com sucesso!");
+                }
+
+                window.saveTestimonials(list);
+                window.closeTestimonialModal();
+                window.renderTestimonials();
+            });
+        }
+
+        // Shared Gallery Picker Modal Logic
+        let galleryTargetInputId = '';
+        window.openGalleryForField = function(fieldId) {
+            galleryTargetInputId = fieldId;
+            const modal = document.getElementById('gallery-picker-modal');
+            const grid = document.getElementById('gallery-picker-grid');
+            const presets = getGalleryPresets();
+
+            if (presets.length === 0) {
+                grid.className = "col-span-full py-8 text-center text-xs text-slate-400 font-medium";
+                grid.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-4">
+                        <span class="material-symbols-outlined text-[32px] text-slate-300 mb-2">image_search</span>
+                        <p class="text-slate-400">A galeria de presets está vazia. Cadastre imagens na aba Blog!</p>
+                    </div>
+                `;
+            } else {
+                grid.className = "grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[350px] overflow-y-auto pr-1";
+                grid.innerHTML = presets.map((preset) => `
+                    <div onclick="selectGalleryPickerPreset('${preset.url}')" class="relative group aspect-video rounded-xl overflow-hidden shadow-sm border border-slate-200 opacity-80 hover:opacity-100 hover:scale-[1.02] cursor-pointer transition-all duration-200" title="${preset.name}">
+                        <img src="${preset.url}" alt="${preset.name}" class="w-full h-full object-cover" />
+                        <div class="absolute inset-x-0 bottom-0 bg-primary/75 backdrop-blur-[2px] py-1 px-2 text-center">
+                            <span class="text-[9px] font-bold text-white tracking-wide">${preset.name}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            modal.classList.remove('hidden');
+        };
+
+        window.closeGalleryPickerModal = function() {
+            document.getElementById('gallery-picker-modal').classList.add('hidden');
+        };
+
+        window.selectGalleryPickerPreset = function(url) {
+            if (galleryTargetInputId) {
+                document.getElementById(galleryTargetInputId).value = url;
+            }
+            closeGalleryPickerModal();
+            showToast("Imagem selecionada!");
+        };
+
+        // Accordion Toggle for Editor Sections
+        window.toggleEditorAccordion = function(id) {
+            const panel = document.getElementById(id);
+            const chevron = document.getElementById('chevron-' + id);
+            if (!panel) return;
+            const isHidden = panel.classList.contains('hidden');
+            panel.classList.toggle('hidden');
+            if (chevron) {
+                chevron.classList.toggle('rotate-180', isHidden);
+            }
+        };
+
+        // ===== IMAGE UPLOAD FROM COMPUTER =====
+        // Hidden file input shared across all upload buttons
+        const _uploadInput = document.createElement('input');
+        _uploadInput.type = 'file';
+        _uploadInput.accept = 'image/*';
+        _uploadInput.style.display = 'none';
+        document.body.appendChild(_uploadInput);
+
+        let _uploadTargetFieldId = '';
+
+        window.uploadImageForField = function(fieldId) {
+            _uploadTargetFieldId = fieldId;
+            _uploadInput.value = '';
+            _uploadInput.click();
+        };
+
+        _uploadInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file || !_uploadTargetFieldId) return;
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showToast("Selecione apenas arquivos de imagem.");
+                return;
+            }
+
+            // Validate file size (max 10MB raw, will be compressed)
+            if (file.size > 10 * 1024 * 1024) {
+                showToast("Imagem muito grande (máx 10MB).");
+                return;
+            }
+
+            showToast("Processando imagem...");
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Compress and resize using Canvas
+                    const MAX_SIZE = 1200; // max dimension
+                    let w = img.width;
+                    let h = img.height;
+
+                    if (w > MAX_SIZE || h > MAX_SIZE) {
+                        if (w > h) {
+                            h = Math.round(h * (MAX_SIZE / w));
+                            w = MAX_SIZE;
+                        } else {
+                            w = Math.round(w * (MAX_SIZE / h));
+                            h = MAX_SIZE;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+
+                    // Convert to JPEG with 0.7 quality for lightweight data URL
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                    // Set value on target field
+                    const targetField = document.getElementById(_uploadTargetFieldId);
+                    if (targetField) {
+                        targetField.value = dataUrl;
+                    }
+
+                    // Calculate compressed size for feedback
+                    const sizeKB = Math.round(dataUrl.length / 1024);
+                    showToast(`Imagem carregada! (${w}x${h}, ~${sizeKB}KB)`);
+                };
+                img.onerror = function() {
+                    showToast("Erro ao processar a imagem.");
+                };
+                img.src = event.target.result;
+            };
+            reader.onerror = function() {
+                showToast("Erro ao ler o arquivo.");
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // ===== DIFFERENTIALS EDITOR =====
+        const defaultDifferentials = {
+            title: "Planejamento integrado e logística diária para maximizar seu tempo clínico.",
+            items: [
+                { title: "Sede em Jundiaí com Logística Expressa", text: "Coleta e entrega diária programada para a capital paulista, Grande São Paulo, Jundiaí e região, garantindo fluxo contínuo para sua clínica." },
+                { title: "Discussão de Casos Direto com o Especialista", text: "Sem intermediários ou atendentes comerciais. Você define o planejamento clínico e a linha de terminação diretamente com o técnico responsável pelo laboratório." },
+                { title: "Recepção de Escaneamento Multimarcas", text: "Integração direta com arquivos STL de qualquer scanner do mercado, acelerando o início de confecção e minimizando o tempo de espera do paciente." }
+            ]
+        };
+
+        window.loadDifferentials = function() {
+            const data = JSON.parse(localStorage.getItem('dentalab_differentials')) || defaultDifferentials;
+            document.getElementById('editor-diff-title').value = data.title || '';
+            for (let i = 0; i < 3; i++) {
+                const item = data.items[i] || { title: '', text: '' };
+                document.getElementById(`editor-diff-${i+1}-title`).value = item.title || '';
+                document.getElementById(`editor-diff-${i+1}-text`).value = item.text || '';
+            }
+        };
+
+        const diffForm = document.getElementById('differentials-edit-form');
+        if (diffForm) {
+            diffForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const data = {
+                    title: document.getElementById('editor-diff-title').value.trim(),
+                    items: [1,2,3].map(i => ({
+                        title: document.getElementById(`editor-diff-${i}-title`).value.trim(),
+                        text: document.getElementById(`editor-diff-${i}-text`).value.trim()
+                    }))
+                };
+                localStorage.setItem('dentalab_differentials', JSON.stringify(data));
+                showToast("Diferenciais atualizados com sucesso!");
+            });
+        }
+
+        // ===== SERVICES EDITOR =====
+        const defaultServices = [
+            { name: "Metal Free", desc: "Coroas e facetas cerâmicas de alta translucidez, oferecendo estética natural e biocompatibilidade.", image: "assets/images/servicos/metal-free.jpg" },
+            { name: "Resina", desc: "Provisórios e planejamentos estéticos de alta densidade em resina acrílica ou composta.", image: "assets/images/servicos/resina.jpg" },
+            { name: "Estrutura Metálica", desc: "Infraestruturas metálicas usinadas ou fundidas de alta precisão para reabilitações protéticas.", image: "assets/images/servicos/estrutura-metalica.jpg" },
+            { name: "Metalo Cerâmica", desc: "Restaurações clássicas que unem resistência mecânica metálica à estética da cerâmica aplicada.", image: "assets/images/servicos/metalo-ceramica.jpg" },
+            { name: "Protocolos", desc: "Próteses completas implanto-suportadas em zircônia ou acrílico com perfeito ajuste passivo.", image: "assets/images/servicos/protocolos.jpg" },
+            { name: "Over Denture", desc: "Próteses removíveis retidas por implantes com sistemas O-ring ou barra-clip para maior estabilidade.", image: "assets/images/servicos/over-denture.jpg" }
+        ];
+
+        window.loadServices = function() {
+            const title = JSON.parse(localStorage.getItem('dentalab_services_title') || 'null') || "Soluções desenvolvidas para atender diferentes necessidades clínicas";
+            const services = JSON.parse(localStorage.getItem('dentalab_services') || 'null') || defaultServices;
+            document.getElementById('editor-svc-title').value = title;
+
+            const container = document.getElementById('editor-services-list');
+            container.innerHTML = services.map((svc, i) => `
+                <div class="border border-slate-100 rounded-xl p-4 space-y-3">
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Serviço ${i+1}</span>
+                    <input id="editor-svc-${i}-name" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" value="${escapeHTML(svc.name)}" placeholder="Nome do Serviço"/>
+                    <textarea id="editor-svc-${i}-desc" rows="2" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" placeholder="Descrição...">${escapeHTML(svc.desc)}</textarea>
+                    <div class="flex gap-2">
+                        <input id="editor-svc-${i}-img" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" value="${escapeHTML(svc.image)}" placeholder="URL ou path da imagem"/>
+                        <button type="button" onclick="uploadImageForField('editor-svc-${i}-img')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">upload</span>Enviar</button>
+                        <button type="button" onclick="openGalleryForField('editor-svc-${i}-img')" class="bg-primary/5 hover:bg-primary/10 text-primary px-3 rounded-xl text-xs font-bold transition-all whitespace-nowrap">Galeria</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        const svcForm = document.getElementById('services-edit-form');
+        if (svcForm) {
+            svcForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const title = document.getElementById('editor-svc-title').value.trim();
+                const services = [];
+                let i = 0;
+                while (document.getElementById(`editor-svc-${i}-name`)) {
+                    services.push({
+                        name: document.getElementById(`editor-svc-${i}-name`).value.trim(),
+                        desc: document.getElementById(`editor-svc-${i}-desc`).value.trim(),
+                        image: document.getElementById(`editor-svc-${i}-img`).value.trim()
+                    });
+                    i++;
+                }
+                localStorage.setItem('dentalab_services_title', JSON.stringify(title));
+                localStorage.setItem('dentalab_services', JSON.stringify(services));
+                showToast("Serviços atualizados com sucesso!");
+            });
+        }
+
+        // ===== CTA EDITOR =====
+        const defaultCTA = {
+            title: "Pronto para iniciar sua parceria?",
+            subtitle: "Atendemos a Grande São Paulo, Jundiaí e toda a região com logística dedicada e entregas diárias.",
+            btn: "Entrar em Contato"
+        };
+
+        window.loadCTA = function() {
+            const data = JSON.parse(localStorage.getItem('dentalab_cta')) || defaultCTA;
+            document.getElementById('editor-cta-title').value = data.title || '';
+            document.getElementById('editor-cta-subtitle').value = data.subtitle || '';
+            document.getElementById('editor-cta-btn').value = data.btn || '';
+        };
+
+        const ctaForm = document.getElementById('cta-edit-form');
+        if (ctaForm) {
+            ctaForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const data = {
+                    title: document.getElementById('editor-cta-title').value.trim(),
+                    subtitle: document.getElementById('editor-cta-subtitle').value.trim(),
+                    btn: document.getElementById('editor-cta-btn').value.trim()
+                };
+                localStorage.setItem('dentalab_cta', JSON.stringify(data));
+                showToast("CTA atualizado com sucesso!");
+            });
+        }
+
+        // ===== FOOTER/CONTACT EDITOR =====
+        const defaultFooter = {
+            phone: "(11) 94793-7339",
+            email: "contato@laboratoriolavorato.com.br",
+            address: "R. Messina, 89 - Jardim Messina\nJundiaí - SP, 13207-480",
+            tagline: "Elevando os padrões da prótese dentária com inovação tecnológica, precisão milimétrica e cuidado artesanal.",
+            instagram: "https://www.instagram.com/laboratoriolavorato/",
+            whatsapp: "5511947937339",
+            linkedin: "https://www.linkedin.com/in/laborat%C3%B3rio-lavorato-pr%C3%B3tese-dentaria-18924258/"
+        };
+
+        window.loadFooter = function() {
+            const data = JSON.parse(localStorage.getItem('dentalab_footer')) || defaultFooter;
+            document.getElementById('editor-footer-phone').value = data.phone || '';
+            document.getElementById('editor-footer-email').value = data.email || '';
+            document.getElementById('editor-footer-address').value = data.address || '';
+            document.getElementById('editor-footer-tagline').value = data.tagline || '';
+            document.getElementById('editor-footer-instagram').value = data.instagram || '';
+            document.getElementById('editor-footer-whatsapp').value = data.whatsapp || '';
+            document.getElementById('editor-footer-linkedin').value = data.linkedin || '';
+        };
+
+        const footerForm = document.getElementById('footer-edit-form');
+        if (footerForm) {
+            footerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const data = {
+                    phone: document.getElementById('editor-footer-phone').value.trim(),
+                    email: document.getElementById('editor-footer-email').value.trim(),
+                    address: document.getElementById('editor-footer-address').value.trim(),
+                    tagline: document.getElementById('editor-footer-tagline').value.trim(),
+                    instagram: document.getElementById('editor-footer-instagram').value.trim(),
+                    whatsapp: document.getElementById('editor-footer-whatsapp').value.trim(),
+                    linkedin: document.getElementById('editor-footer-linkedin').value.trim()
+                };
+                localStorage.setItem('dentalab_footer', JSON.stringify(data));
+                showToast("Informações de contato atualizadas com sucesso!");
+            });
+        }
+
+        // ===== FAQ MANAGEMENT =====
+        const defaultFaqItems = [
+            {
+                question: "Qual o prazo médio de entrega para Zircônia?",
+                answer: "O prazo padrão para restaurações em Zircônia é de 5 a 7 dias úteis após o recebimento do escaneamento ou moldagem física. Oferecemos serviço expresso para casos urgentes sob consulta."
+            },
+            {
+                question: "Vocês trabalham com fluxo 100% digital?",
+                answer: "Sim! Somos um laboratório especializado em CAD/CAM. Aceitamos arquivos STL de qualquer marca de scanner intraoral do mercado, integrando-os diretamente ao nosso processo de produção automatizado."
+            },
+            {
+                question: "Como funciona o sistema de coleta física?",
+                answer: "Dispomos de motoboys próprios para a região metropolitana e parcerias com transportadoras especializadas para todo o país. Basta solicitar a coleta via WhatsApp ou portal do cliente."
+            }
+        ];
+
+        window.getFaqItems = function() {
+            try {
+                let stored = localStorage.getItem('dentalab_faq');
+                if (!stored) {
+                    stored = JSON.stringify(defaultFaqItems);
+                    localStorage.setItem('dentalab_faq', stored);
+                }
+                return JSON.parse(stored);
+            } catch (e) {
+                console.error("Erro ao ler FAQ:", e);
+                return [...defaultFaqItems];
+            }
+        };
+
+        function saveFaqItems(items) {
+            try {
+                localStorage.setItem('dentalab_faq', JSON.stringify(items));
+            } catch (e) {
+                console.error("Erro ao salvar FAQ:", e);
+                showToast("Erro ao salvar perguntas frequentes.");
+            }
+        }
+
+        window.renderFaqList = function() {
+            const container = document.getElementById('editor-faq-list');
+            const emptyState = document.getElementById('faq-empty-state');
+            const items = getFaqItems();
+
+            if (!container) return;
+
+            if (items.length === 0) {
+                container.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
+                return;
+            }
+            if (emptyState) emptyState.classList.add('hidden');
+
+            container.innerHTML = items.map((item, index) => `
+                <div class="flex items-start justify-between gap-4 py-4 group">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="material-symbols-outlined text-[16px] text-primary/50">help</span>
+                            <p class="text-sm font-bold text-primary line-clamp-1">${escapeHTML(item.question)}</p>
+                        </div>
+                        <p class="text-xs text-slate-500 line-clamp-2 pl-6">${escapeHTML(item.answer)}</p>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
+                        ${index > 0 ? `<button onclick="moveFaqItem(${index}, -1)" class="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-primary" title="Mover para cima"><span class="material-symbols-outlined text-sm">arrow_upward</span></button>` : ''}
+                        ${index < items.length - 1 ? `<button onclick="moveFaqItem(${index}, 1)" class="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-primary" title="Mover para baixo"><span class="material-symbols-outlined text-sm">arrow_downward</span></button>` : ''}
+                        <button onclick="editFaqItem(${index})" class="p-1.5 rounded-lg hover:bg-primary/5 transition-colors text-primary" title="Editar">
+                            <span class="material-symbols-outlined text-sm">edit</span>
+                        </button>
+                        <button onclick="deleteFaqItem(${index})" class="p-1.5 rounded-lg hover:bg-red-50 transition-colors text-red-500" title="Excluir">
+                            <span class="material-symbols-outlined text-sm">delete</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.openFaqForm = function(editIndex) {
+            const container = document.getElementById('faq-edit-form-container');
+            const title = document.getElementById('faq-form-title');
+            const questionInput = document.getElementById('faq-edit-question');
+            const answerInput = document.getElementById('faq-edit-answer');
+            const indexInput = document.getElementById('faq-edit-index');
+
+            if (editIndex !== undefined && editIndex !== null) {
+                const items = getFaqItems();
+                const item = items[editIndex];
+                if (!item) return;
+                questionInput.value = item.question;
+                answerInput.value = item.answer;
+                indexInput.value = editIndex;
+                title.innerHTML = `<span class="material-symbols-outlined text-[18px]">edit_note</span> Editar Pergunta #${editIndex + 1}`;
+            } else {
+                questionInput.value = '';
+                answerInput.value = '';
+                indexInput.value = '';
+                title.innerHTML = `<span class="material-symbols-outlined text-[18px]">help_outline</span> Nova Pergunta`;
+            }
+
+            container.classList.remove('hidden');
+            questionInput.focus();
+        };
+
+        window.closeFaqForm = function() {
+            const container = document.getElementById('faq-edit-form-container');
+            container.classList.add('hidden');
+            document.getElementById('faq-edit-question').value = '';
+            document.getElementById('faq-edit-answer').value = '';
+            document.getElementById('faq-edit-index').value = '';
+        };
+
+        window.saveFaqItem = function() {
+            const question = document.getElementById('faq-edit-question').value.trim();
+            const answer = document.getElementById('faq-edit-answer').value.trim();
+            const editIndex = document.getElementById('faq-edit-index').value;
+
+            if (!question || !answer) {
+                showToast("Preencha a pergunta e a resposta.");
+                return;
+            }
+
+            const items = getFaqItems();
+
+            if (editIndex !== '' && editIndex !== null) {
+                // Editing existing item
+                const idx = parseInt(editIndex);
+                items[idx] = { question, answer };
+                showToast("Pergunta atualizada com sucesso!");
+            } else {
+                // Adding new item
+                items.push({ question, answer });
+                showToast("Nova pergunta adicionada!");
+            }
+
+            saveFaqItems(items);
+            closeFaqForm();
+            renderFaqList();
+        };
+
+        window.editFaqItem = function(index) {
+            openFaqForm(index);
+        };
+
+        window.deleteFaqItem = function(index) {
+            if (confirm("Tem certeza que deseja excluir esta pergunta?")) {
+                const items = getFaqItems();
+                items.splice(index, 1);
+                saveFaqItems(items);
+                renderFaqList();
+                showToast("Pergunta removida com sucesso!");
+            }
+        };
+
+        window.moveFaqItem = function(index, direction) {
+            const items = getFaqItems();
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= items.length) return;
+            // Swap items
+            [items[index], items[newIndex]] = [items[newIndex], items[index]];
+            saveFaqItems(items);
+            renderFaqList();
+        };
+
+        // ===== MASTER LOAD FOR EDITOR TAB =====
+        // Override loadHeroData to also load all other sections
+        const origLoadHero = window.loadHeroData;
+        window.loadAllEditorData = function() {
+            origLoadHero();
+            window.loadDifferentials();
+            window.loadServices();
+            window.loadCTA();
+            window.loadFooter();
+            window.renderTestimonials();
+            window.renderFaqList();
+        };
+        // Patch switchTab to call loadAllEditorData instead of individual calls
+        window.loadHeroData = window.loadAllEditorData;
+
+        // Initialize Leads on load
+        renderLeads();
+        renderBlogArticles();
+    </script>
+</body>
+</html>

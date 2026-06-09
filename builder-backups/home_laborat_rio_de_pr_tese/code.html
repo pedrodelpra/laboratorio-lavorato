@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DENTALAB | Precisão e Estética em Cada Detalhe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#04090f",
+                    "on-primary-fixed": "#041a3f",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#161c22",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-background": "#0b1c30",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "primary": "#05133b",
+                    "inverse-surface": "#213145",
+                    "background": "#f8f9ff",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#b4c6f4",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#d9e2ff",
+                    "tertiary-container": "#1b2127",
+                    "primary-container": "#0a1f44",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-container": "#828890",
+                    "on-secondary-container": "#616363",
+                    "on-primary-fixed-variant": "#34466d",
+                    "secondary-container": "#dfe0e0",
+                    "outline-variant": "#c5c6cf",
+                    "primary-fixed-dim": "#b4c6f4",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#4c5e86",
+                    "secondary": "#5d5f5f",
+                    "surface-variant": "#d3e4fe",
+                    "tertiary-fixed-dim": "#c1c7cf",
+                    "on-surface": "#0b1c30",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-dim": "#cbdbf5",
+                    "outline": "#75777f",
+                    "tertiary-fixed": "#dde3eb",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "surface": "#f8f9ff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-container": "#e5eeff",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-fixed-variant": "#41474e",
+                    "on-surface-variant": "#44464e",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-primary-container": "#7687b2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "80px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "container-max-width": "1200px",
+                    "gutter": "24px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .soft-shadow {
+            box-shadow: 0 10px 40px -10px rgba(11, 28, 48, 0.08);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #05133b; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="sticky top-0 w-full z-50 bg-surface/70 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max-width mx-auto">
+<div class="text-body-lg font-headline-lg tracking-tighter text-primary">DENTALAB</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-primary border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Home</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-md text-label-md" href="#servicos">Serviços</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-md text-label-md" href="#blog">Blog</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md hover:opacity-80 transition-opacity active:scale-95 duration-150">
+                Contato
+            </button>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative overflow-hidden bg-background pt-10 pb-20 md:pt-20 md:pb-32">
+<div class="max-w-container-max-width mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
+<div class="md:col-span-6 z-10">
+<div class="inline-flex items-center gap-2 bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full mb-6">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span class="font-label-md text-label-md">Laboratório de Alta Performance</span>
+</div>
+<h1 class="font-display-lg text-[40px] md:text-display-lg text-primary mb-6">Precisão e Estética em Cada Detalhe</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-lg">
+                    Transformando a odontologia através de tecnologia CAD/CAM de ponta e materiais de excelência para resultados clínicos superiores.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-full font-label-md text-label-md shadow-lg hover:translate-y-[-2px] transition-all">
+                        Solicitar Orçamento
+                    </button>
+<button class="border border-outline text-primary px-8 py-4 rounded-full font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+                        Conhecer Processos
+                    </button>
+</div>
+</div>
+<div class="md:col-span-6 relative mt-12 md:mt-0">
+<div class="relative w-full aspect-square rounded-[40px] overflow-hidden soft-shadow group">
+<img alt="Odontologia Digital" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A clean, high-end dental laboratory setting featuring a smiling young woman and a professional dentist utilizing advanced digital scanning technology. The lighting is bright and hospital-clean, emphasizing a modern light-mode aesthetic with sterile white surfaces and deep navy accents. The focus is on the precision and hygiene of the environment, evoking a sense of trust and technological advancement in dental prosthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB7aphErXhWgI3_ZK6Z5cP9wJ2ZuMz9i2i4lFf_XgENUv06PgRCaJd5KRrU2W2xGoZ1QuQrFcntHi7BtlHrAB9SLQFIQGKJuggYhVVIosNe_kzxA8h8ergkXNxp2cma-1mU0yPd2qIElKI5wNpRSS4zrDNM-ln_uS-Mx8h94iSOWTi_XEiAR6AoZX778babeaLOWVPXmFxkSCmAI1eKaDGrz8-aLYWPsVbSPeafR6Abydowvi-brNhQuBoNRcu3Yb-BrmQwxP_o70"/>
+<!-- Floating Tech Card -->
+<div class="absolute bottom-6 left-6 right-6 glass-card p-6 rounded-[24px] border border-white/40 flex items-center gap-4">
+<div class="bg-primary-container p-3 rounded-full text-on-primary-container">
+<span class="material-symbols-outlined">biotech</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary font-bold">Tecnologia 100% Digital</p>
+<p class="text-[12px] text-on-surface-variant">Scanner intraoral e fresagem CAD/CAM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Services Section -->
+<section class="py-section-gap bg-surface" id="servicos">
+<div class="max-w-container-max-width mx-auto px-margin-desktop">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Especialidades Técnicas</h2>
+<div class="w-20 h-1 bg-primary mx-auto rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Zircônia -->
+<div class="bg-white p-10 rounded-[24px] soft-shadow hover:translate-y-[-8px] transition-all group border border-transparent hover:border-primary-fixed">
+<div class="bg-surface-container-low w-16 h-16 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[32px]">diamond</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Zircônia</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Resistência extrema e biocompatibilidade para próteses fixas de alta durabilidade.</p>
+</div>
+<!-- Cerâmica -->
+<div class="bg-white p-10 rounded-[24px] soft-shadow hover:translate-y-[-8px] transition-all group border border-transparent hover:border-primary-fixed">
+<div class="bg-surface-container-low w-16 h-16 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[32px]">palette</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Cerâmica</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Estética refinada e translucidez natural para lentes de contato e facetas.</p>
+</div>
+<!-- Implante -->
+<div class="bg-white p-10 rounded-[24px] soft-shadow hover:translate-y-[-8px] transition-all group border border-transparent hover:border-primary-fixed">
+<div class="bg-surface-container-low w-16 h-16 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[32px]">architecture</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Implantes</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Soluções protéticas customizadas para todos os sistemas de implante do mercado.</p>
+</div>
+<!-- Fluxo Digital -->
+<div class="bg-white p-10 rounded-[24px] soft-shadow hover:translate-y-[-8px] transition-all group border border-transparent hover:border-primary-fixed">
+<div class="bg-surface-container-low w-16 h-16 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[32px]">bolt</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Fluxo Digital</h3>
+<p class="text-on-surface-variant font-body-md text-body-md">Agilidade e precisão milimétrica em todo o processo, do escaneamento à entrega.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Differentials / Awards Section -->
+<section class="py-section-gap bg-surface-container-lowest">
+<div class="max-w-container-max-width mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-12">Por que escolher o Dentalab?</h2>
+<div class="space-y-8">
+<div class="flex gap-6 items-start">
+<div class="flex-shrink-0 bg-primary-container text-on-primary-container w-12 h-12 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1">CAD/CAM de Última Geração</h4>
+<p class="text-on-surface-variant">Sistemas automatizados que garantem ajuste perfeito e eliminam erros manuais.</p>
+</div>
+</div>
+<div class="flex gap-6 items-start">
+<div class="flex-shrink-0 bg-primary-container text-on-primary-container w-12 h-12 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1">Prazos de Entrega Rigorosos</h4>
+<p class="text-on-surface-variant">Logística inteligente para que seu consultório nunca pare de produzir.</p>
+</div>
+</div>
+<div class="flex gap-6 items-start">
+<div class="flex-shrink-0 bg-primary-container text-on-primary-container w-12 h-12 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">workspace_premium</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-primary mb-1">Qualidade Certificada</h4>
+<p class="text-on-surface-variant">Uso exclusivo de insumos das melhores marcas mundiais com rastreabilidade total.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="col-span-2 relative h-[300px] rounded-[32px] overflow-hidden soft-shadow">
+<img alt="Laboratório" class="w-full h-full object-cover" data-alt="A futuristic and immaculately clean dental lab laboratory. High-tech CAD/CAM milling machines are visible in the background, illuminated by subtle blue LED lights. In the foreground, a detailed ceramic tooth bridge is displayed on a minimalist white stand. The atmosphere is professional, clinical, and technologically sophisticated, following a clean light-mode aesthetic with a palette of whites and deep navy blues." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD71VcqlScbEHwGFG8fp9QMacJv1pZdXqc-ZqDKhbwUc5n44jV2o2pS-fk3cerHzSsykUzuDXTsINGlzJsg9uGnBpIkHtzq6_zs4Ccvfcf_FyRbMI9Hcxa4hfKPeXCRzv4-JJ4ctigljFU0fWqu9SZbaA6dRfeHBRGWhjoLAC1kPDzafXAyQqeiY31JZyuAxPaBVPdJ-LZKa8doMUWM1Y-VhJiUgzb3f-NeVeow35OR19gL8XtL97txCF5KS1RbPgxONGu5DgHlvYE"/>
+</div>
+<div class="bg-primary text-on-primary p-8 rounded-[32px] flex flex-col justify-between">
+<span class="text-[40px] font-bold">15+</span>
+<p class="font-label-md text-label-md">Anos de experiência no mercado protético</p>
+</div>
+<div class="bg-surface-container-highest p-8 rounded-[32px] flex flex-col justify-between">
+<span class="text-[40px] font-bold text-primary">50k+</span>
+<p class="font-label-md text-label-md text-primary">Casos clínicos de sucesso entregues</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Blog Preview Section -->
+<section class="py-section-gap bg-surface" id="blog">
+<div class="max-w-container-max-width mx-auto px-margin-desktop">
+<div class="flex justify-between items-end mb-16">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Conhecimento Técnico</h2>
+<p class="text-on-surface-variant">As últimas tendências e atualizações da odontologia digital.</p>
+</div>
+<a class="text-primary font-bold flex items-center gap-2 hover:underline decoration-primary/30" href="#">
+                    Ver todo o blog <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Blog Item 1 -->
+<article class="group">
+<div class="aspect-[4/3] rounded-[24px] overflow-hidden mb-6 soft-shadow">
+<img alt="Blog Post" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Close-up of a high-precision dental 3D scanner working on a dental impression. The scene is bathed in a soft clinical white light with professional blue accents. The focus is sharp on the technological details of the scanner and the precision of the digital model. The mood is innovative and scientific, fitting the clean laboratory aesthetic of the brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoLdfHXOPxhsftq7ojFFp_QZfFPdehDFB96RC361bOxp0StjwH45DjdjrFCIh5A_LBQmamPz1PlMJWgiNO9VamaDbud7e2wVg2aMiXsWAbn7LAid9-q3xAwgtc1k-oBTqXgXRRhZwIPcV17jaIlfO7lsDrTtn3-LlepG3v5CTx0i-s4ci7_ifteolvEPYTxGryY3usOMnNSj6MaFZvetz6wGARZYzAt7Dw6MIcw2ViVobYlqVSR1o4cg4sO1s0V5ViVCh2cLNIF4Y"/>
+</div>
+<span class="text-primary font-bold text-[12px] uppercase tracking-widest">Inovação</span>
+<h3 class="font-headline-md text-headline-md text-primary mt-3 group-hover:text-surface-tint transition-colors">O Impacto da Inteligência Artificial no Desenho Protético</h3>
+<p class="text-on-surface-variant mt-3 line-clamp-2">Entenda como novos algoritmos estão acelerando a criação de próteses ainda mais anatômicas...</p>
+</article>
+<!-- Blog Item 2 -->
+<article class="group">
+<div class="aspect-[4/3] rounded-[24px] overflow-hidden mb-6 soft-shadow">
+<img alt="Blog Post" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A professional dental technician carefully inspecting a set of porcelain veneers under a magnifying lamp. The environment is a clean, modern lab bench with organized tools. The lighting is focused and warm, creating a feeling of craftsmanship and attention to detail. The color palette remains consistent with white, gray, and deep navy tones for a clinical and sophisticated look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhdgGVaDBR4iuoNGK1nQ8w7vdoJdpXMH-nJF6hWw2z9Rjv_Rg5vKVQ2jEmOsoc-C3kDcOXtvtsSTIArtkV7ESoZYk-2oNIQoRG23mU6dApzk3wMlbwQCABXi_UkQLhv_6va4X3PjkMinZv1pGOKsUBGh-Pcjuge0GrsarOut5xUPQQUwh_z5r3HTqfcbwjKtu3_I0m3j25e1gNGgu6-js9dJecEh2psVL1ew-sOz1YJm-6Pn3P--keC1rvtsQwjAIDXWgOvTuu57M"/>
+</div>
+<span class="text-primary font-bold text-[12px] uppercase tracking-widest">Materiais</span>
+<h3 class="font-headline-md text-headline-md text-primary mt-3 group-hover:text-surface-tint transition-colors">Zircônia vs. Dissilicato: Quando escolher cada material?</h3>
+<p class="text-on-surface-variant mt-3 line-clamp-2">Um guia técnico para auxiliar o clínico na tomada de decisão baseada em resistência e estética...</p>
+</article>
+<!-- Blog Item 3 -->
+<article class="group">
+<div class="aspect-[4/3] rounded-[24px] overflow-hidden mb-6 soft-shadow">
+<img alt="Blog Post" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A dentist showing a 3D digital model of a patient's mouth on a high-resolution tablet. The background shows a modern, bright dental office. The interaction is professional and technology-driven, highlighting the seamless integration between lab and clinic. The lighting is natural and airy, maintaining the high-end minimalist visual style with navy blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE8tF_z6OTHMG5TK1fZ-dttTygKDvUxmm9Tt4gCgZrVxs-SC0hL6b58UxShTXsn-9oiwQOM3rok2gvZnS0lpK6mpVg57s-DIp5DsvaTGeVE7LfZoUNcoG2Y4b7RPRGVfaHfE8AfJOWhw1wKXkd_5AzAC7Y0d7-SMcnxUv0K8v92e0UMrlA8RY11FuIstwpYghWzG08EhLeRudf0GxPG24VCdZD69Kid_oszmguysRV5KH7OeZ36faPHO8Is6RGLnewA0A_Dd-tm1c"/>
+</div>
+<span class="text-primary font-bold text-[12px] uppercase tracking-widest">Fluxo</span>
+<h3 class="font-headline-md text-headline-md text-primary mt-3 group-hover:text-surface-tint transition-colors">Otimizando a Comunicação Clínica-Laboratório</h3>
+<p class="text-on-surface-variant mt-3 line-clamp-2">Dicas práticas para reduzir ajustes em boca através de um escaneamento intraoral impecável...</p>
+</article>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-section-gap bg-primary text-on-primary">
+<div class="max-w-container-max-width mx-auto px-margin-desktop">
+<h2 class="font-headline-lg text-headline-lg mb-16 text-center">O que dizem nossos parceiros</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="bg-white/10 p-12 rounded-[32px] backdrop-blur-md">
+<div class="flex gap-1 mb-6 text-primary-fixed">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-lg text-body-lg mb-8 italic">"A precisão do Dentalab mudou minha rotina. Praticamente não faço ajustes oclusais em minhas coroas de zircônia. O fluxo digital deles é impecável."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">RM</div>
+<div>
+<p class="font-bold">Dr. Ricardo Menezes</p>
+<p class="text-[12px] opacity-70">Reabilitação Oral &amp; Estética</p>
+</div>
+</div>
+</div>
+<div class="bg-white/10 p-12 rounded-[32px] backdrop-blur-md">
+<div class="flex gap-1 mb-6 text-primary-fixed">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-lg text-body-lg mb-8 italic">"Excelente atendimento e pontualidade. Encontrar um laboratório que entende a urgência clínica sem sacrificar a estética é raro hoje em dia."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">AL</div>
+<div>
+<p class="font-bold">Dra. Amanda Lima</p>
+<p class="text-[12px] opacity-70">Especialista em Implantodontia</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container py-section-gap">
+<div class="max-w-container-max-width mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<!-- Brand -->
+<div class="md:col-span-1">
+<div class="text-headline-md font-headline-md text-primary mb-6">DENTALAB</div>
+<p class="text-on-surface-variant font-body-md text-body-md mb-8">
+                    Elevando os padrões da prótese dentária com inovação tecnológica e cuidado artesanal.
+                </p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">social_leaderboard</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">camera</span>
+</a>
+</div>
+</div>
+<!-- Links 1 -->
+<div>
+<h4 class="font-bold text-primary mb-6">Laboratório</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Sobre Nós</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Equipe Técnica</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Certificações</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">FAQ</a></li>
+</ul>
+</div>
+<!-- Links 2 -->
+<div>
+<h4 class="font-bold text-primary mb-6">Serviços</h4>
+<ul class="space-y-4">
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Protocolo Digital</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Guias Cirúrgicas</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Enceramento Diagnóstico</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-all" href="#">Envio de Arquivos</a></li>
+</ul>
+</div>
+<!-- Contact/Location -->
+<div>
+<h4 class="font-bold text-primary mb-6">Localização</h4>
+<p class="text-on-surface-variant mb-4">Av. da Tecnologia, 1200 - Centro<br/>São Paulo, SP</p>
+<div class="space-y-2">
+<a class="flex items-center gap-2 text-primary font-bold" href="tel:+551199999999">
+<span class="material-symbols-outlined text-[18px]">phone</span>
+                        (11) 9999-9999
+                    </a>
+<a class="flex items-center gap-2 text-primary font-bold" href="mailto:contato@dentalab.com.br">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+                        contato@dentalab.com.br
+                    </a>
+</div>
+</div>
+</div>
+<div class="max-w-container-max-width mx-auto px-margin-desktop mt-20 pt-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-on-surface-variant text-[14px]">© 2024 DENTALAB. Todos os direitos reservados.</p>
+<div class="flex gap-8 text-[14px]">
+<a class="text-on-surface-variant hover:text-primary" href="#">Políticia de Privacidade</a>
+<a class="text-on-surface-variant hover:text-primary" href="#">Termos de Uso</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple scroll animation for reveal effects
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-10');
+            observer.observe(section);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Blog Laboratório Lavorato | Excelência em Prótese Dentária</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#04090f",
+                    "on-primary-fixed": "#041a3f",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#161c22",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-background": "#0b1c30",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "primary": "#05133b",
+                    "inverse-surface": "#213145",
+                    "background": "#f8f9ff",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#b4c6f4",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#d9e2ff",
+                    "tertiary-container": "#1b2127",
+                    "primary-container": "#0a1f44",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-container": "#828890",
+                    "on-secondary-container": "#616363",
+                    "on-primary-fixed-variant": "#34466d",
+                    "secondary-container": "#dfe0e0",
+                    "outline-variant": "#c5c6cf",
+                    "primary-fixed-dim": "#b4c6f4",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#4c5e86",
+                    "secondary": "#5d5f5f",
+                    "surface-variant": "#d3e4fe",
+                    "tertiary-fixed-dim": "#c1c7cf",
+                    "on-surface": "#0b1c30",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-dim": "#cbdbf5",
+                    "outline": "#75777f",
+                    "tertiary-fixed": "#dde3eb",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "surface": "#f8f9ff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-fixed": "#e2e2e2",
+                    "surface-container": "#e5eeff",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "on-tertiary-fixed-variant": "#41474e",
+                    "on-surface-variant": "#44464e",
+                    "on-secondary-fixed-variant": "#454747",
+                    "on-primary-container": "#7687b2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "80px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "container-max-width": "1200px",
+                    "gutter": "24px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .soft-shadow {
+        box-shadow: 0 10px 40px -15px rgba(0, 8, 30, 0.08);
+      }
+      body {
+        background-color: #f8f9ff;
+        color: #0b1c30;
+      }
+      /* Custom styles for filtering animation */
+      .post-card {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .post-hidden {
+        opacity: 0;
+        transform: scale(0.95);
+        pointer-events: none;
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+        border: 0;
+      }
+    </style>
+</head>
+<body class="font-body-md text-body-md selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="sticky top-0 w-full z-50 bg-surface/80 backdrop-blur-md shadow-sm border-b border-outline-variant/10">
+    <nav class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-[1400px] mx-auto">
+        <!-- Logo Left -->
+        <div class="flex-1 flex justify-start">
+            <a href="index.html" class="hover:opacity-85 transition-opacity">
+                <img src="assets/images/Logo.avif" alt="Laboratório Lavorato" class="h-10 w-auto object-contain"/>
+            </a>
+        </div>
+        <!-- Centered options -->
+        <div class="hidden md:flex gap-8 items-center justify-center flex-none">
+            <a class="text-secondary hover:text-primary transition-colors font-label-md text-label-md" href="index.html">Home</a>
+            <a class="text-secondary hover:text-primary transition-colors font-label-md text-label-md" href="sobre.html">Sobre Nós</a>
+            <a class="text-primary border-b-2 border-primary pb-1 font-label-md text-label-md" href="blog.html">Blog</a>
+            <a class="text-secondary hover:text-primary transition-colors font-label-md text-label-md" href="contato.html">Contato</a>
+        </div>
+        <!-- Right side User/Login Icon -->
+        <div class="flex-1 flex justify-end">
+            <div class="flex items-center gap-2">
+                <a href="login.html" class="flex items-center justify-center w-10 h-10 rounded-full border border-outline-variant/60 hover:border-primary text-primary hover:bg-primary hover:text-white transition-all shadow-sm" title="Área Administrativa">
+                    <span class="material-symbols-outlined text-[20px]">person</span>
+                </a>
+                <!-- Hamburger Menu Button -->
+                <button id="mobile-menu-btn" class="flex md:hidden items-center justify-center w-10 h-10 rounded-full border border-outline-variant/60 hover:border-primary text-primary hover:bg-primary hover:text-white transition-all shadow-sm" aria-label="Abrir Menu">
+                    <span class="material-symbols-outlined text-[24px]">menu</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Mobile Drawer Menu Overlay -->
+<div id="mobile-menu" class="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="absolute top-0 right-0 w-80 h-full bg-surface shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-out">
+        <div>
+            <!-- Header of Menu -->
+            <div class="flex justify-between items-center pb-6 border-b border-outline-variant/20 mb-8">
+                <img src="assets/images/Logo.avif" alt="Laboratório Lavorato" class="h-8 w-auto object-contain"/>
+                <button id="close-menu-btn" class="w-10 h-10 rounded-full flex items-center justify-center border border-outline-variant/60 text-primary hover:bg-primary/5 transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            
+            <!-- Navigation Links -->
+            <nav class="flex flex-col gap-6">
+                <a class="text-lg font-semibold text-secondary hover:text-primary transition-colors flex items-center gap-3 py-2 border-b border-outline-variant/10" href="index.html">
+                    <span class="material-symbols-outlined text-[22px]">home</span> Home
+                </a>
+                <a class="text-lg font-semibold text-secondary hover:text-primary transition-colors flex items-center gap-3 py-2 border-b border-outline-variant/10" href="sobre.html">
+                    <span class="material-symbols-outlined text-[22px]">info</span> Sobre Nós
+                </a>
+                <a class="text-lg font-semibold text-primary flex items-center gap-3 py-2 border-b border-outline-variant/10" href="blog.html">
+                    <span class="material-symbols-outlined text-[22px]">menu_book</span> Blog
+                </a>
+                <a class="text-lg font-semibold text-secondary hover:text-primary transition-colors flex items-center gap-3 py-2 border-b border-outline-variant/10" href="contato.html">
+                    <span class="material-symbols-outlined text-[22px]">contact_support</span> Contato
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Login option at the bottom -->
+        <div class="pt-6 border-t border-outline-variant/20">
+            <a href="login.html" class="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-primary text-white font-bold text-sm hover:opacity-90 active:scale-[0.98] transition-all shadow-md">
+                <span class="material-symbols-outlined text-[18px]">lock</span>
+                <span>Acesso Administrativo</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Direct transition to Blog list content without top hero clutter -->
+
+<main class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-10">
+    <!-- List View -->
+    <div id="blog-list-view" class="transition-opacity duration-300">
+        <!-- Blog Search -->
+        <section class="mb-10 flex justify-center">
+            <div class="relative w-full max-w-xl">
+                <input id="search-input" class="w-full pl-12 pr-4 py-3.5 bg-white border border-outline-variant rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-body-md font-body-md outline-none soft-shadow" placeholder="Buscar artigos por palavras-chave..." type="text"/>
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+            </div>
+        </section>
+    
+        <!-- Featured Post Dynamic Container -->
+        <div id="featured-post-container">
+            <!-- Injected via JavaScript -->
+        </div>
+    
+        <!-- Post Grid: Bento Style Dynamic Container -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-12 animate-fade-in" id="posts-grid">
+            <!-- Injected via JavaScript -->
+        </section>
+    
+        <!-- Empty Search State -->
+        <div id="empty-state" class="hidden text-center py-12 md:py-16 bg-white rounded-3xl soft-shadow border border-outline-variant/30 mb-12">
+            <span class="material-symbols-outlined text-[64px] text-outline mb-4">search_off</span>
+            <h3 class="text-headline-md font-headline-md text-primary mb-2">Nenhum artigo encontrado</h3>
+            <p class="text-secondary">Tente mudar os termos da busca ou limpar os filtros de categoria.</p>
+        </div>
+        
+        <!-- Load More Button -->
+        <div id="load-more-container" class="flex justify-center mb-12 hidden">
+            <button id="load-more-btn" class="px-8 py-3.5 bg-white border border-[#dfe2ec] hover:border-primary text-primary font-semibold text-sm rounded-full shadow-sm hover:shadow-md transition-all flex items-center gap-2 active:scale-95">
+                <span>Carregar mais artigos</span>
+                <span class="material-symbols-outlined text-[18px]">keyboard_double_arrow_down</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Detail View -->
+    <div id="blog-detail-view" class="hidden opacity-0 transition-opacity duration-300 max-w-4xl mx-auto">
+        <!-- Injected via JavaScript -->
+    </div>
+</main>
+
+<!-- Toast Alert Container -->
+<div id="toast-container" class="fixed bottom-8 right-8 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+<!-- Footer -->
+<footer class="bg-surface-container py-8 border-t border-outline-variant/30">
+    <div class="max-w-[1400px] mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <!-- Brand / About -->
+        <div>
+            <a href="index.html" class="mb-3 block hover:opacity-85 transition-opacity">
+                <img src="assets/images/Logo.avif" alt="Laboratório Lavorato" class="h-8 w-auto object-contain"/>
+            </a>
+            <p class="text-on-surface-variant text-xs md:text-sm leading-relaxed mb-4 max-w-sm">
+                Elevando os padrões da prótese dentária com inovação tecnológica, precisão milimétrica e cuidado artesanal.
+            </p>
+            <div class="flex gap-3">
+                <!-- Instagram -->
+                <a class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm" href="https://www.instagram.com/laboratoriolavorato/" target="_blank" aria-label="Instagram">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                    </svg>
+                </a>
+                <!-- WhatsApp -->
+                <a class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm" href="https://wa.me/5511947937339" target="_blank" aria-label="WhatsApp">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.062 5.248 5.316-.006 11.758-.006c3.12.001 6.05 1.217 8.256 3.425 2.205 2.208 3.417 5.141 3.415 8.263-.004 6.51-5.259 11.764-11.701 11.764-2.007-.001-3.98-.518-5.725-1.503L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.97C16.579 2.022 14.12 1 11.761 1 6.331 1 1.902 5.375 1.898 10.806c0 1.691.455 3.336 1.321 4.796l-.994 3.63 3.822-.978zm11.233-6.07c-.3-.15-1.772-.875-2.046-.975-.276-.1-.476-.15-.676.15-.2.3-.775.975-.95 1.175-.175.2-.35.225-.65.075-3.537-1.766-4.737-3.036-5.312-4.017-.175-.3-.025-.45.075-.575.2-.25.3-.325.4-.475.1-.15.05-.3-.025-.45-.075-.15-.676-1.626-.926-2.226-.244-.589-.493-.509-.676-.519-.174-.01-.374-.012-.574-.012-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5s1.075 2.9 1.225 3.1c.15.2 2.11 3.224 5.11 4.524 3 .125 3 .075 3.525-.025.575-.1 1.772-.725 2.022-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
+                    </svg>
+                </a>
+                <!-- LinkedIn -->
+                <a class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all shadow-sm" href="https://www.linkedin.com/in/laborat%C3%B3rio-lavorato-pr%C3%B3tese-dentaria-18924258/" target="_blank" aria-label="LinkedIn">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Links (Sections) -->
+        <div class="md:justify-self-center">
+            <h4 class="text-xs uppercase tracking-wider font-bold text-primary mb-3">Navegação</h4>
+            <ul class="grid grid-cols-2 gap-x-8 gap-y-2 text-xs md:text-sm">
+                <li><a class="text-on-surface-variant hover:text-primary transition-all font-medium" href="index.html">Home</a></li>
+                <li><a class="text-on-surface-variant hover:text-primary transition-all font-medium" href="sobre.html">Sobre Nós</a></li>
+                <li><a class="text-on-surface-variant hover:text-primary transition-all font-medium" href="index.html#servicos">Serviços</a></li>
+                <li><a class="text-on-surface-variant hover:text-primary transition-all font-medium" href="blog.html">Blog</a></li>
+                <li><a class="text-on-surface-variant hover:text-primary transition-all font-medium" href="contato.html">Contato</a></li>
+            </ul>
+        </div>
+
+        <!-- Contact / Info -->
+        <div>
+            <h4 class="text-xs uppercase tracking-wider font-bold text-primary mb-3">Contato &amp; Localização</h4>
+            <p class="text-on-surface-variant text-xs md:text-sm leading-relaxed mb-3">
+                R. Messina, 89 - Jardim Messina<br/>Jundiaí - SP, 13207-480
+            </p>
+            <ul class="space-y-1.5 text-xs md:text-sm">
+                <li>
+                    <a class="inline-flex items-center gap-2 text-primary font-bold hover:opacity-85 transition-opacity" href="tel:+5511947937339">
+                        <span class="material-symbols-outlined text-[16px]">phone</span>
+                        (11) 94793-7339
+                    </a>
+                </li>
+                <li>
+                    <a class="inline-flex items-center gap-2 text-primary font-bold hover:opacity-85 transition-opacity" href="mailto:contato@laboratoriolavorato.com.br">
+                        <span class="material-symbols-outlined text-[16px]">mail</span>
+                        contato@laboratoriolavorato.com.br
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Bottom Copyright -->
+    <div class="max-w-[1400px] mx-auto px-6 md:px-12 mt-6 pt-4 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-3 text-xs md:text-sm">
+        <p class="text-on-surface-variant">© 2026 LABORATÓRIO LAVORATO. Todos os direitos reservados.</p>
+        <div class="flex gap-6">
+            <button class="text-on-surface-variant hover:text-primary transition-colors text-xs md:text-sm font-medium privacy-trigger">Política de Privacidade</button>
+            <button class="text-on-surface-variant hover:text-primary transition-colors text-xs md:text-sm font-medium terms-trigger">Termos de Uso</button>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const defaultArticles = [
+        {
+            title: "O Futuro da Moldagem: Como o Fluxo Digital está Redefinindo a Precisão",
+            category: "fluxo",
+            readtime: "6 min de leitura",
+            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+            summary: "Descubra como as novas tecnologias de escaneamento intraoral e impressão 3D estão eliminando erros manuais e garantindo adaptações marginais perfeitas em próteses fixas.",
+            content: "O avanço vertiginoso da odontologia digital trouxe uma revolução sem precedentes para clínicas e laboratórios.\n\nA transição da moldagem convencional com alginato ou silicone para o escaneamento intraoral elimina uma das maiores fontes de distorções e desconforto para o paciente.\n\nCom arquivos digitais enviados instantaneamente ao laboratório, o tempo de produção é reduzido pela metade, e a fidelidade aos tecidos moles e dentes preparados atinge margens de precisão micrométricas, garantindo próteses perfeitamente adaptadas e com necessidade mínima de ajustes clínicos.",
+            date: "01/06/2026"
+        },
+        {
+            title: "Zircônia Multilayer: A Revolução da Estética e Resistência",
+            category: "estetica",
+            readtime: "5 min de leitura",
+            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCKn_QH7fc-Ma5PbUDxPweV84-VsmX7d90m25wxarupiCx0oZa1K2CiiUBcxeZbG6mXonpfGMRlTTG-iUQY87rDyIlhGnEyp5JtqB5WaVCAaIH9zXPdA1PLlsMzqQWVt6ZnLcwPV8FV7InXU9o3RZT8EYxSQ2HAi2rJ48q4cN_prb30T2nQ-UEv-vhus6vX8bU8QEiykua951-4BunNcSxIBeR0zBDmfHpoDu_h4FWWX5dCJblhgmxq1X9PGytgLiF5owtIw45rVX8",
+            summary: "Entenda por que a zircônia de última geração se tornou a escolha número um para reabilitações extensas.",
+            content: "A busca pelo equilíbrio entre translucidez natural e alta resistência mecânica encontrou seu ápice na zircônia multilayer.\n\nAntigamente, as próteses de zircônia eram criticadas pelo visual excessivamente opaco, necessitando de aplicação manual de cerâmica que corria o risco de lascamento (chipping).\n\nHoje, com os discos multicamadas com transição suave de cor e translucidez do colo à borda incisal, conseguimos fresar próteses monolíticas extremamente estéticas, capazes de resistir a cargas mastigatórias intensas na região posterior sem comprometer a beleza do sorriso.",
+            date: "28/05/2026"
+        },
+        {
+            title: "Comunicação Eficiente: O Segredo para o Sucesso Protético",
+            category: "planejamento",
+            readtime: "8 min de leitura",
+            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+            summary: "Dicas práticas de como otimizar o envio de pedidos e fotos para garantir resultados previsíveis em cada caso.",
+            content: "O entrosamento clínico-laboratorial é o principal pilar para evitar retrabalhos.\n\nA comunicação digital facilitou o envio de fotografias de alta resolução, registros de mordida e mapeamento de cor.\n\nCompartilhar fotos com escalas de cor neutras ao lado do dente homólogo ajuda a calibrar a iluminação do laboratório. Além disso, descrições detalhadas da expectativa do paciente e fotos de face inteira permitem ao técnico planejar a morfologia dos dentes em harmonia com a face do paciente.",
+            date: "24/05/2026",
+            isHandshake: true
+        },
+        {
+            title: "Próteses Sobre Implantes: Estabilidade e Adaptação Marginais",
+            category: "implantodontia",
+            readtime: "12 min de leitura",
+            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCdAuVJb9xgRM8JaKQdlfUhAsUScVYP-f_cvUFJYZ1e6GJlelINAwyLKJkr1eOk-iVKIBuhwDLrcgVmNullz0tHsW4g8B65XlRpY6iSrXwEQZA2wks1Ywiz8KGUQkf3yPhMJ1-9mmUWnqNtzqu053vr1WUDhQJ7fDL7wQH7nGipYkB3ZsQDR2DdtLNPcCVfcUhYBZ4ks6IMaY5kFaHewqCWZBmbXu008KZy3KQ2GiE4MpbiwgIlEGBmrrs_XJvYqrsPUd6ya-G5KYg",
+            summary: "Um guia completo sobre como a fresagem CAD/CAM melhora o ajuste passivo de próteses fixas e protocolos sobre implantes no dia a dia clínico.",
+            content: "A longevidade dos implantes está diretamente associada ao ajuste passivo da estrutura protética.\n\nQualquer tensão transmitida aos implantes devido a imprecisões na fundição convencional pode causar reabsorção óssea marginal ou fadiga dos parafusos.\n\nA tecnologia CAD/CAM nos permite fresar barras e infraestruturas metálicas ou de zircônia a partir de blocos homogêneos industriais, garantindo que o encaixe final seja livre de tensões microscópicas e proteja a osseointegração no longo prazo.",
+            date: "20/05/2026"
+        },
+        {
+            title: "A Importância da Seleção do Cimento em Restaurações de Zircônia",
+            category: "planejamento",
+            readtime: "7 min de leitura",
+            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+            summary: "Escolher o cimento resinoso correto e fazer o pré-tratamento ideal da peça são passos críticos para o sucesso da cimentação adesiva.",
+            content: "A cimentação da zircônia exige cuidados específicos, visto que ela não é condicionável por ácido fluorídrico como as cerâmicas vítreas.\n\nO uso de jato de óxido de alumínio em baixa pressão combinado com primer contendo monômero MDP é o padrão-ouro para obter adesão química estável.\n\nUtilizar cimentos resinosos autoadesivos ou cimentos convencionais com MDP garante excelente retenção física e química a longo prazo, evitando solturas indesejadas das coroas.",
+            date: "15/05/2026"
+        },
+        {
+            title: "Impressão 3D de Modelos: Precisão no Laboratório Moderno",
+            category: "fluxo",
+            readtime: "6 min de leitura",
+            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+            summary: "A evolução das resinas 3D e o impacto do pós-processamento correto na estabilidade dimensional de modelos para prótese.",
+            content: "A impressão 3D revolucionou o diagnóstico e o planejamento protético.\n\nPara que os modelos impressos substituam o gesso clássico sem perder fidelidade, a calibração das impressoras de resina LCD/SLA e o processo adequado de lavagem em álcool isopropílico e cura UV final são fundamentais.\n\nQualquer variação nesses passos pode induzir contração volumétrica na resina, impactando negativamente na adaptação de copings e pilares protéticos confeccionados sobre esses modelos.",
+            date: "10/05/2026"
+        },
+        {
+            title: "Tendências em Odontologia Estética: O Espaço da Lente de Contato Ultrassutil",
+            category: "tendencias",
+            readtime: "9 min de leitura",
+            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCKn_QH7fc-Ma5PbUDxPweV84-VsmX7d90m25wxarupiCx0oZa1K2CiiUBcxeZbG6mXonpfGMRlTTG-iUQY87rDyIlhGnEyp5JtqB5WaVCAaIH9zXPdA1PLlsMzqQWVt6ZnLcwPV8FV7InXU9o3RZT8EYxSQ2HAi2rJ48q4cN_prb30T2nQ-UEv-vhus6vX8bU8QEiykua951-4BunNcSxIBeR0zBDmfHpoDu_h4FWWX5dCJblhgmxq1X9PGytgLiF5owtIw45rVX8",
+            summary: "A tendência global dos sorrisos naturais e como os laboratórios estão respondendo com laminados cerâmicos ultrafinos sem desgaste dentário.",
+            content: "Os tempos de dentes artificialmente brancos e planos estão dando lugar a sorrisos com texturas naturais, nuances e anatomia real.\n\nCom cerâmicas de silicato de lítio reforçadas por zircônia, conseguimos confeccionar laminados com espessuras de até 0.2 mm.\n\nEssas lentes ultrafinas exigem mínimo ou nenhum preparo biológico, preservando o esmalte saudável e proporcionando a translucidez ideal para mimetizar a estrutura dentária natural.",
+            date: "05/05/2026"
+        },
+        {
+            title: "Scanner de Bancada vs. Scanner Intraoral: Qual a Diferença na Prática?",
+            category: "tendencias",
+            readtime: "8 min de leitura",
+            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBEJwdgJMM3HvjDoBPVQ0Ddb_Yswrya0pNeJ4EesCrvlirRdmiJ08gs3skRJdUnqz9fi__LkhOfrlhqTNOfVQCkOwpsidzo5lm5sgQimuyoMQC7zHBmevJ8k-u4SuQdfUXt6pTjqFYXo-L56j0Jf-cOn3in6u2dWQsW5T5XH4LSEpQ5ATXFyWRvE6-R4lq3pX8BXueWQQO_V9Cwd7pq1CKmrAWkGMNeqV8bT3nVP3FgiLhNcEzoNZAV9b0Vq--q5HHh2UNkKg6cozw",
+            summary: "Análise comparativa das tecnologias de digitalização óptica e suas aplicações específicas nos consultórios e laboratórios.",
+            content: "Embora o scanner intraoral atue diretamente na boca do paciente, o scanner de bancada é a ferramenta vital do técnico de laboratório.\n\nO scanner de bancada oferece maior precisão absoluta e velocidade para digitalizar modelos de gesso inteiros e troquéis múltiplos.\n\nJá o scanner intraoral destaca-se pela conveniência clínica, eliminando o gesso por completo e acelerando a comunicação direta de novos casos para início imediato do design digital.",
+            date: "01/05/2026"
+        }
+    ];
+
+    const categoryMap = {
+        implantodontia: 'Implantodontia',
+        protese: 'Prótese Dentária',
+        fluxo: 'Fluxo Digital',
+        estetica: 'Zircônia e Estética',
+        planejamento: 'Planejamento Protético',
+        tendencias: 'Tendências da Odontologia'
+    };
+
+    // Seed articles in localStorage safely (only if empty — never overwrite admin-managed data)
+    try {
+        const storedArticles = localStorage.getItem('dentalab_blog_articles');
+        if (!storedArticles || JSON.parse(storedArticles).length === 0) {
+            localStorage.setItem('dentalab_blog_articles', JSON.stringify(defaultArticles));
+        }
+    } catch (e) {
+        console.error("Erro ao gerenciar seed de artigos:", e);
+    }
+
+    // Helper to check if a date is in the future
+    function isFutureDate(dateStr) {
+        if (!dateStr) return false;
+        let checkDate;
+        if (dateStr.includes('-')) {
+            checkDate = new Date(dateStr + 'T00:00:00');
+        } else {
+            const [day, month, year] = dateStr.split('/');
+            checkDate = new Date(`${year}-${month}-${day}T00:00:00`);
+        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return checkDate > today;
+    }
+
+    // Helper to format date
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        if (dateStr.includes('-')) {
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+        return dateStr;
+    }
+
+    // Load and render articles
+    let searchQuery = '';
+    let visibleCountLimit = 3; // Start showing 3 grid articles to make pagination clear
+    let allArticles = [];
+
+    function loadAndRenderArticles() {
+        let rawArticles = [];
+        try {
+            rawArticles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+        } catch (e) {
+            console.error("Erro ao carregar artigos:", e);
+            rawArticles = [...defaultArticles]; // Fallback to presets if blocked
+        }
+        
+        // Filter out future agendados posts for public view
+        const articles = rawArticles.filter(art => !isFutureDate(art.date));
+        
+        // Sort articles by date descending (newest first)
+        const parseDate = (dStr) => {
+            if (!dStr) return new Date(0);
+            if (dStr.includes('-')) return new Date(dStr + 'T00:00:00');
+            const [d, m, y] = dStr.split('/');
+            return new Date(`${y}-${m}-${d}T00:00:00`);
+        };
+        allArticles = articles.sort((a, b) => parseDate(b.date) - parseDate(a.date));
+
+        // Inject original sorted index so we can retrieve them easily
+        allArticles.forEach((art, idx) => {
+            art.index = idx;
+        });
+
+        filterAndRender();
+    }
+
+    function filterAndRender() {
+        const featuredContainer = document.getElementById('featured-post-container');
+        const gridContainer = document.getElementById('posts-grid');
+        const emptyState = document.getElementById('empty-state');
+        const loadMoreContainer = document.getElementById('load-more-container');
+
+        // Apply filters
+        const normalizedQuery = searchQuery.trim().toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        const filtered = allArticles.filter(post => {
+            const searchContent = `${post.title} ${post.summary} ${post.category || ''}`.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const searchMatches = searchContent.includes(normalizedQuery);
+            return searchMatches;
+        });
+
+        if (filtered.length === 0) {
+            featuredContainer.innerHTML = '';
+            gridContainer.innerHTML = '';
+            emptyState.classList.remove('hidden');
+            loadMoreContainer.classList.add('hidden');
+            return;
+        } else {
+            emptyState.classList.add('hidden');
+        }
+
+        // Helper to calculate reading time dynamically (based on exact word-count table)
+        const getReadingTime = (content) => {
+            if (!content) return "1 min de leitura";
+            const words = content.trim().split(/\s+/).length;
+            if (words <= 200) return "1 min de leitura";
+            if (words <= 400) return "2 min de leitura";
+            if (words <= 600) return "3 min de leitura";
+            if (words <= 800) return "4 min de leitura";
+            if (words <= 1000) return "5 min de leitura";
+            if (words <= 1200) return "6 min de leitura";
+            if (words <= 1400) return "7 min de leitura";
+            if (words <= 1600) return "8 min de leitura";
+            if (words <= 1800) return "9 min de leitura";
+            if (words <= 2000) return "10 min de leitura";
+            return "+10 min de leitura";
+        };
+
+        // Render Featured Post (first article of filtered)
+        const featured = filtered[0];
+        const searchContentFeatured = `${featured.title} ${featured.summary} ${featured.category}`.toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        featuredContainer.innerHTML = `
+            <section class="mb-section-gap cursor-pointer" onclick="showArticleDetail(${featured.index})">
+                <div class="relative group overflow-hidden rounded-[24px] bg-white soft-shadow flex flex-col md:flex-row">
+                    <div class="md:w-3/5 h-[300px] md:h-[500px] overflow-hidden relative">
+                        <img alt="${featured.imageAlt || featured.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="${featured.image}"/>
+                        <div class="absolute top-6 left-6 glass-effect px-4 py-1.5 rounded-full flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                            <span class="text-label-md font-label-md text-primary">Destaque</span>
+                        </div>
+                    </div>
+                    <div class="md:w-2/5 p-8 md:p-12 flex flex-col justify-center">
+                        <h2 class="font-headline-lg text-headline-lg text-primary mb-6 leading-tight">${featured.title}</h2>
+                        <p class="text-secondary font-body-md text-body-md mb-8 line-clamp-3">${featured.summary}</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <p class="text-[12px] text-secondary">Publicado em ${formatDate(featured.date)}</p>
+                                <p class="text-[12px] text-outline mt-0.5">${getReadingTime(featured.content)}</p>
+                            </div>
+                            <button class="flex items-center gap-2 text-primary font-label-md text-label-md group/btn">
+                                Ler mais 
+                                <span class="material-symbols-outlined transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+
+        // Render other articles in grid, with pagination
+        const remaining = filtered.slice(1);
+        const paginatedRemaining = remaining.slice(0, visibleCountLimit);
+
+        gridContainer.innerHTML = paginatedRemaining.map(post => {
+            return `
+                <article class="bg-white text-primary p-8 rounded-[24px] soft-shadow flex flex-col hover:-translate-y-2 transition-transform duration-300 cursor-pointer" onclick="showArticleDetail(${post.index})">
+                    <div class="aspect-video rounded-xl overflow-hidden mb-6">
+                        <img alt="${post.imageAlt || post.title}" class="w-full h-full object-cover" src="${post.image}"/>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md mb-4 leading-snug">${post.title}</h3>
+                    <p class="text-secondary font-body-md text-body-md mb-6 flex-grow">${post.summary}</p>
+                    <div class="pt-6 border-t border-outline-variant flex items-center justify-between">
+                        <span class="text-[12px] text-outline">${getReadingTime(post.content)}</span>
+                        <span class="material-symbols-outlined text-primary">arrow_outward</span>
+                    </div>
+                </article>
+            `;
+        }).join('');
+
+        // Show/hide "Carregar Mais" button
+        if (remaining.length > visibleCountLimit) {
+            loadMoreContainer.classList.remove('hidden');
+        } else {
+            loadMoreContainer.classList.add('hidden');
+        }
+    }
+
+    // Helper to slugify titles for URLs (SEO clean slugs)
+    function slugify(text) {
+        return text.toString().toLowerCase().trim()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove accents
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+            .replace(/\-\-+/g, '-');         // Replace multiple - with single -
+    }
+
+    // Detail View Actions
+    function showArticleDetail(index, pushState = true) {
+        // Handle clicking when dragging on desktop
+        if (totalMoved > 10) return;
+
+        const post = allArticles[index];
+        if (!post) return;
+
+        const listView = document.getElementById('blog-list-view');
+        const detailView = document.getElementById('blog-detail-view');
+        const heroSection = document.getElementById('blog-hero-section');
+
+        // Hide Hero Section on Detail view
+        if (heroSection) {
+            heroSection.classList.add('hidden');
+        }
+
+        // Render detail view content
+        detailView.innerHTML = `
+            <div class="py-6">
+                <!-- Back button -->
+                <button onclick="closeArticleDetail()" class="inline-flex items-center gap-2 text-primary hover:text-primary-container font-semibold mb-8 group transition-all">
+                    <span class="material-symbols-outlined transition-transform group-hover:-translate-x-1">arrow_back</span>
+                    Voltar para o blog
+                </button>
+                
+                <!-- Article Header -->
+                <div class="mb-8">
+                    <h1 class="text-headline-lg md:text-[40px] font-extrabold text-primary mt-6 mb-4 leading-tight">${post.title}</h1>
+                    <div class="flex items-center gap-4 text-secondary text-sm">
+                        <span>Publicado em ${formatDate(post.date)}</span>
+                        <span>•</span>
+                        <span>${(() => {
+                            const words = post.content.trim().split(/\s+/).length;
+                            if (words <= 200) return "1 min de leitura";
+                            if (words <= 400) return "2 min de leitura";
+                            if (words <= 600) return "3 min de leitura";
+                            if (words <= 800) return "4 min de leitura";
+                            if (words <= 1000) return "5 min de leitura";
+                            if (words <= 1200) return "6 min de leitura";
+                            if (words <= 1400) return "7 min de leitura";
+                            if (words <= 1600) return "8 min de leitura";
+                            if (words <= 1800) return "9 min de leitura";
+                            if (words <= 2000) return "10 min de leitura";
+                            return "+10 min de leitura";
+                        })()}</span>
+                    </div>
+                </div>
+
+                <!-- Article Cover Image -->
+                <div class="w-full aspect-video md:aspect-[21/9] rounded-3xl overflow-hidden mb-10 shadow-sm">
+                    <img src="${post.image}" alt="${post.imageAlt || post.title}" class="w-full h-full object-cover"/>
+                </div>
+
+                <!-- Article Content -->
+                <article class="prose max-w-none text-on-background/90 text-[18px] leading-relaxed space-y-6">
+                    ${post.content.split('\n\n').map(p => `<p class="mb-4">${p.replace(/\n/g, '<br/>')}</p>`).join('')}
+
+                    ${post.hasFooter !== false ? `
+                    <!-- Semantic institutional SEO footer inside the article tag -->
+                    <footer class="mt-12 pt-8 border-t border-outline-variant/30 text-sm text-secondary leading-relaxed space-y-3">
+                        <div class="flex items-center gap-2 text-primary font-bold">
+                            <span class="material-symbols-outlined text-[20px]">verified</span>
+                            <span class="text-xs uppercase tracking-wider">Sobre o Laboratório Lavorato</span>
+                        </div>
+                        <p>
+                            Fundado em 1991, o <strong>Laboratório Lavorato</strong> acumula mais de 35 anos de excelência e pioneirismo no mercado de prótese dentária. Sediado em Jundiaí - SP, no Jardim Messina, o laboratório atende cirurgiões-dentistas, clínicas, hospitais e profissionais de odontologia e saúde em toda a <strong>Grande São Paulo, Capital, Jundiaí e região</strong>. Somos altamente especializados em fluxos de trabalho 100% digitais e tecnologia CAD/CAM para entregar máxima precisão, estética natural e perfeita adaptação passiva em reabilitações protéticas de alta complexidade.
+                        </p>
+                    </footer>
+                    ` : ''}
+                </article>
+
+                <hr class="my-12 border-outline-variant/30"/>
+
+                <!-- CTA -->
+                <div class="bg-primary text-white p-8 md:p-12 rounded-[32px] text-center soft-shadow relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#05133b] via-[#05133b]/95 to-transparent z-0"></div>
+                    <div class="relative z-10 max-w-2xl mx-auto">
+                        <h3 class="text-headline-md font-headline-md mb-4 text-white">Ficou com alguma dúvida sobre este caso?</h3>
+                        <p class="text-[#b4c6f4]/80 mb-6 font-body-md">Nossa equipe de especialistas está pronta para ajudar a planejar as melhores soluções para seus pacientes.</p>
+                        <a href="contato.html" class="inline-flex items-center gap-2 bg-white text-primary px-6 py-3 rounded-full font-semibold hover:bg-white/90 transition-all">
+                            Entre em contato
+                            <span class="material-symbols-outlined text-[18px]">chat</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        if (pushState) {
+            const newUrl = window.location.pathname + `?post=${slugify(post.title)}`;
+            window.history.pushState({ postIndex: index }, "", newUrl);
+        }
+
+        // Update meta tags dynamically for Googlebot, search engines and AI crawlers
+        document.title = `${post.title} | Blog Laboratório Lavorato`;
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.name = "description";
+            document.head.appendChild(metaDesc);
+        }
+        metaDesc.content = post.summary;
+
+        // Switch animation
+        listView.classList.add('opacity-0');
+        setTimeout(() => {
+            listView.classList.add('hidden');
+            detailView.classList.remove('hidden');
+            setTimeout(() => {
+                detailView.classList.remove('opacity-0');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 50);
+        }, 300);
+    }
+
+    function closeArticleDetail(pushState = true) {
+        const listView = document.getElementById('blog-list-view');
+        const detailView = document.getElementById('blog-detail-view');
+        const heroSection = document.getElementById('blog-hero-section');
+
+        // Show Hero Section back on list view
+        if (heroSection) {
+            heroSection.classList.remove('hidden');
+        }
+
+        if (pushState) {
+            const newUrl = window.location.pathname;
+            window.history.pushState(null, "", newUrl);
+        }
+
+        // Reset page titles and meta description
+        document.title = "Blog Laboratório Lavorato | Excelência em Prótese Dentária";
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) {
+            metaDesc.content = "Insights, tendências, tecnologias e experiências que ajudam dentistas, clínicas, hospitais e profissionais de odontologia e saúde a tomar decisões com mais confiança.";
+        }
+
+        detailView.classList.add('opacity-0');
+        setTimeout(() => {
+            detailView.classList.add('hidden');
+            listView.classList.remove('hidden');
+            setTimeout(() => {
+                listView.classList.remove('opacity-0');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 50);
+        }, 300);
+    }
+
+    // Routing function to handle direct URL parameters on page load or history change
+    function handleRouting() {
+        const params = new URLSearchParams(window.location.search);
+        const postParam = params.get('post');
+        if (postParam !== null) {
+            const idx = allArticles.findIndex(art => slugify(art.title) === postParam || art.index.toString() === postParam);
+            if (idx !== -1) {
+                showArticleDetail(idx, false);
+                return;
+            }
+        }
+        closeArticleDetail(false);
+    }
+
+    window.addEventListener('popstate', () => {
+        handleRouting();
+    });
+
+    // Load-more listener
+    document.getElementById('load-more-btn').addEventListener('click', () => {
+        visibleCountLimit += 6;
+        filterAndRender();
+    });
+
+    // Call loading function
+    loadAndRenderArticles();
+    handleRouting();
+    let totalMoved = 0;
+
+    // Filtering & Searching Logic
+    const searchInput = document.getElementById('search-input');
+    const emptyState = document.getElementById('empty-state');
+
+
+    // Search input handler
+    searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        visibleCountLimit = 6; // Reset page limit
+        filterAndRender();
+    });
+
+    // Toast Alert Helper
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `flex items-center gap-3 px-6 py-4 rounded-2xl glass-effect border soft-shadow pointer-events-auto transform translate-y-4 opacity-0 transition-all duration-300 ${
+            type === 'success' ? 'border-primary/20 text-primary' : 'border-error/20 text-error'
+        }`;
+        
+        toast.innerHTML = `
+            <span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : 'error'}</span>
+            <span class="font-medium text-sm">${message}</span>
+        `;
+        
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.remove('translate-y-4', 'opacity-0');
+        }, 10);
+        
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-y-2');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 4000);
+    }
+
+    // Mobile menu toggle logic
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuContent = mobileMenu ? mobileMenu.querySelector('.transform') : null;
+
+    function openMenu() {
+        if (mobileMenu && mobileMenuContent) {
+            mobileMenu.classList.remove('pointer-events-none', 'opacity-0');
+            mobileMenu.classList.add('opacity-100');
+            mobileMenuContent.classList.remove('translate-x-full');
+        }
+    }
+
+    function closeMenu() {
+        if (mobileMenu && mobileMenuContent) {
+            mobileMenu.classList.remove('opacity-100');
+            mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+            mobileMenuContent.classList.add('translate-x-full');
+        }
+    }
+
+    if (mobileMenuBtn && closeMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenu);
+        mobileMenu.addEventListener('click', (e) => {
+            if (e.target === mobileMenu) closeMenu();
+        });
+    }
+</script>
+<script src="assets/js/legal-modal.js"></script>
+</body>
+</html>

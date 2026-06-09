@@ -1,0 +1,8 @@
+{
+  "name": "site-laboratorio-lavorato",
+  "version": "1.0.0",
+  "description": "DENTALAB - Laboratório de Prótese Dentária",
+  "scripts": {
+    "dev": "npx -y vite"
+  }
+}

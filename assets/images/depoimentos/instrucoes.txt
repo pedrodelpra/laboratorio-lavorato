@@ -1,0 +1,10 @@
+Coloque as fotos dos cirurgiões dentistas dos depoimentos nesta pasta.
+
+Para usá-las no site (index.html), você pode nomear os arquivos de forma simples, por exemplo:
+- arnaldo-pfaff.jpg (ou .png)
+- tulio-tateyama.jpg (ou .png)
+- lucas-santos.jpg (ou .png)
+- martin-moreira.jpg (ou .png)
+- marcos-chagas.jpg (ou .png)
+
+E depois atualizar a tag de imagem de cada card no index.html. Se precisar de ajuda para atualizar o HTML depois de colocar as imagens aqui, basta me pedir!

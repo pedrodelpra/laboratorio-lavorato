@@ -1,0 +1,11 @@
+Coloque as fotos das soluções/serviços nesta pasta.
+
+Sugestões de nomes para os arquivos de imagem correspondentes:
+- metal-free.jpg (ou .png, .avif, etc.)
+- resina.jpg
+- estrutura-metalica.jpg
+- metalo-ceramica.jpg
+- protocolos.jpg
+- over-denture.jpg
+
+Assim que você subir as imagens aqui, me avise para eu atualizar os caminhos no index.html!
