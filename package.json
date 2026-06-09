@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "DENTALAB - Laboratório de Prótese Dentária",
   "scripts": {
-    "dev": "npx -y vite"
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
   }
 }
