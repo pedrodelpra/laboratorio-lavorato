@@ -98,14 +98,8 @@
 
             // Se o Supabase estiver configurado
             if (isSupabaseConfigured()) {
-                // Primeiro valida se o email está na lista autorizada
-                if (!(await isEmailAuthorized(email))) {
-                    errorMessage.querySelector('span:last-child').textContent = 'Este e-mail não tem autorização para acessar o sistema!';
-                    errorMessage.classList.remove('hidden');
-                    return;
-                }
-
                 try {
+                    // 1. Tenta autenticar primeiro no Supabase
                     const { data, error } = await supabase.auth.signInWithPassword({
                         email: email,
                         password: password
@@ -117,7 +111,17 @@
                         return;
                     }
 
-                    // Login com sucesso no Supabase
+                    // 2. Agora que está autenticado, valida se o e-mail está na tabela authorized_admins
+                    const isAuthorized = await isEmailAuthorized(email);
+                    if (!isAuthorized) {
+                        // Se não for admin, desloga imediatamente por segurança e barra o acesso
+                        await supabase.auth.signOut();
+                        errorMessage.querySelector('span:last-child').textContent = 'Este e-mail não tem autorização para acessar o sistema!';
+                        errorMessage.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Login com sucesso no Supabase e e-mail verificado
                     localStorage.setItem('dentalab_admin_authenticated', 'true');
                     window.location.href = 'dashboard.html';
                 } catch (err) {
