@@ -49,7 +49,7 @@
         <div id="legal-modal" class="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-primary/20 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
             <div class="bg-white/95 backdrop-blur-lg border border-outline-variant/30 max-w-2xl w-full p-6 md:p-8 rounded-[24px] shadow-2xl transform scale-95 transition-all duration-300 flex flex-col max-h-[85vh]">
                 <div class="flex justify-between items-center pb-4 border-b border-outline-variant/20 mb-6 shrink-0">
-                    <img src="assets/images/Logo.avif" alt="Laboratório Lavorato" class="h-8 w-auto object-contain"/>
+                    <img src="/assets/images/Logo.avif" alt="Laboratório Lavorato" class="h-8 w-auto object-contain"/>
                     <button id="close-legal-btn" class="w-10 h-10 rounded-full flex items-center justify-center border border-outline-variant/60 text-primary hover:bg-primary/5 transition-colors" aria-label="Fechar modal">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -102,26 +102,23 @@
         }
     });
 
-    // Helper to bind events to triggers
+    // Helper to bind events to triggers using event delegation
     function bindTriggers() {
-        const privacyBtns = document.querySelectorAll('.privacy-trigger');
-        const termsBtns = document.querySelectorAll('.terms-trigger');
-
-        privacyBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
+        document.addEventListener('click', function(e) {
+            const privacyBtn = e.target.closest('.privacy-trigger');
+            const termsBtn = e.target.closest('.terms-trigger');
+            
+            if (privacyBtn) {
                 e.preventDefault();
                 openLegalModal('privacy');
-            });
-            // Update cursor style
-            btn.style.cursor = 'pointer';
-        });
-
-        termsBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            } else if (termsBtn) {
                 e.preventDefault();
                 openLegalModal('terms');
-            });
-            // Update cursor style
+            }
+        });
+
+        // Set cursor style for existing triggers
+        document.querySelectorAll('.privacy-trigger, .terms-trigger').forEach(btn => {
             btn.style.cursor = 'pointer';
         });
     }
