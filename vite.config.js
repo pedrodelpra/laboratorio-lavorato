@@ -13,5 +13,16 @@ export default defineConfig({
         dashboard: resolve(__dirname, 'dashboard.html'),
       }
     }
+  },
+  server: {
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const url = req.url.split('?')[0];
+        if (!url.endsWith('.html') && url !== '/' && !url.includes('.')) {
+          req.url = url + '.html';
+        }
+        next();
+      });
+    }
   }
 });

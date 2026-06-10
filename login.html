@@ -43,7 +43,7 @@
     <div class="glass-panel w-full max-w-[440px] p-10 rounded-[32px] soft-shadow text-white relative z-10">
         <!-- Logo / Back Link -->
         <div class="flex justify-between items-center mb-10">
-            <a href="index.html" class="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm font-semibold">
+            <a href="/" class="flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm font-semibold">
                 <span class="material-symbols-outlined text-sm">arrow_back</span> Voltar ao site
             </a>
             <img src="assets/images/Logo.avif" alt="Laboratório Lavorato" class="h-6 w-auto object-contain filter brightness-0 invert opacity-80"/>
@@ -123,7 +123,7 @@
 
                     // Login com sucesso no Supabase e e-mail verificado
                     localStorage.setItem('dentalab_admin_authenticated', 'true');
-                    window.location.href = 'dashboard.html';
+                    window.location.href = '/dashboard';
                 } catch (err) {
                     console.error("Erro na autenticação:", err);
                     errorMessage.querySelector('span:last-child').textContent = 'Erro de conexão com o banco de dados!';
@@ -134,7 +134,7 @@
                 console.warn("Supabase não configurado. Utilizando bypass local para demonstração.");
                 if (await isEmailAuthorized(email) || email === 'admin@laboratoriolavorato.com.br') {
                     localStorage.setItem('dentalab_admin_authenticated', 'true');
-                    window.location.href = 'dashboard.html';
+                    window.location.href = '/dashboard';
                 } else {
                     errorMessage.querySelector('span:last-child').textContent = 'E-mail não autorizado localmente!';
                     errorMessage.classList.remove('hidden');
