@@ -849,6 +849,7 @@
                     }
                     // Recarrega os leads se estiver autenticado e configurado
                     renderLeads();
+                    await renderBlogArticles();
                 }
             })
             .catch(err => {
@@ -1264,6 +1265,7 @@
 
                     if (error) {
                         console.error("Erro ao buscar artigos do Supabase:", error);
+                        showToast("Erro Supabase ao carregar blog: " + error.message);
                         loadArticlesFromLocalStorage();
                     } else {
                         currentArticlesList = data.map(item => ({
@@ -1280,6 +1282,7 @@
                     }
                 } catch (err) {
                     console.error("Erro de rede ao buscar artigos do Supabase:", err);
+                    showToast("Erro de rede ao carregar blog: " + err.message);
                     loadArticlesFromLocalStorage();
                 }
             } else {
