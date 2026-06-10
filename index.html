@@ -798,157 +798,12 @@
         }
     ];
 
-    // Load testimonials
-    let testimonials = [];
-    try {
-        let stored = localStorage.getItem('dentalab_testimonials');
-        if (!stored) {
-            stored = JSON.stringify(defaultTestimonials);
-            localStorage.setItem('dentalab_testimonials', stored);
-        }
-        testimonials = JSON.parse(stored);
-    } catch (e) {
-        console.error("Erro ao carregar depoimentos:", e);
-        testimonials = [...defaultTestimonials];
-    }
-
-    // Load dynamic Hero Data
-    try {
-        const heroData = JSON.parse(localStorage.getItem('dentalab_hero_data'));
-        if (heroData) {
-            const bgEl = document.getElementById('hero-bg');
-            const titleEl = document.getElementById('hero-title');
-            const subtitleEl = document.getElementById('hero-subtitle');
-            
-            if (bgEl && heroData.bg) bgEl.src = heroData.bg;
-            if (titleEl && heroData.title) titleEl.textContent = heroData.title;
-            if (subtitleEl && heroData.subtitle) subtitleEl.textContent = heroData.subtitle;
-        }
-    } catch (e) {
-        console.error("Erro ao carregar dados do Hero:", e);
-    }
-
-    // Load dynamic Differentials
-    try {
-        const diffData = JSON.parse(localStorage.getItem('dentalab_differentials'));
-        if (diffData) {
-            const titleEl = document.getElementById('diff-section-title');
-            if (titleEl && diffData.title) titleEl.textContent = diffData.title;
-            diffData.items.forEach((item, i) => {
-                const tEl = document.getElementById(`diff-${i+1}-title`);
-                const pEl = document.getElementById(`diff-${i+1}-text`);
-                if (tEl && item.title) tEl.textContent = item.title;
-                if (pEl && item.text) pEl.textContent = item.text;
-            });
-        }
-    } catch (e) {
-        console.error("Erro ao carregar diferenciais:", e);
-    }
-
-    // Load dynamic Services
-    try {
-        const svcTitle = JSON.parse(localStorage.getItem('dentalab_services_title'));
-        const svcData = JSON.parse(localStorage.getItem('dentalab_services'));
-        if (svcTitle) {
-            const el = document.getElementById('svc-section-title');
-            if (el) el.textContent = svcTitle;
-        }
-        if (svcData && svcData.length > 0) {
-            const grid = document.getElementById('svc-cards-grid');
-            if (grid) {
-                grid.innerHTML = svcData.map(svc => `
-                    <div class="relative rounded-[24px] overflow-hidden shadow-md hover:shadow-xl hover:translate-y-[-6px] transition-all duration-300 group border border-outline-variant/10 h-[250px]">
-                        <img alt="${svc.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="${svc.image}"/>
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#05133b]/95 via-[#05133b]/30 to-transparent z-10"></div>
-                        <div class="absolute inset-0 p-4 flex flex-col justify-end z-20">
-                            <h3 class="text-base font-extrabold text-white mb-1 tracking-tight group-hover:translate-x-1 transition-transform duration-300">${svc.name}</h3>
-                            <p class="text-[#dfe2ec] text-[11px] leading-relaxed font-medium">${svc.desc}</p>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-    } catch (e) {
-        console.error("Erro ao carregar serviços:", e);
-    }
-
-    // Load dynamic CTA
-    try {
-        const ctaData = JSON.parse(localStorage.getItem('dentalab_cta'));
-        if (ctaData) {
-            const titleEl = document.getElementById('cta-title');
-            const subEl = document.getElementById('cta-subtitle');
-            const btnEl = document.getElementById('cta-btn');
-            if (titleEl && ctaData.title) titleEl.textContent = ctaData.title;
-            if (subEl && ctaData.subtitle) subEl.innerHTML = ctaData.subtitle;
-            if (btnEl && ctaData.btn) {
-                btnEl.innerHTML = ctaData.btn + ' <span class="material-symbols-outlined text-[18px]">arrow_forward</span>';
-            }
-        }
-    } catch (e) {
-        console.error("Erro ao carregar CTA:", e);
-    }
-
-    // Load dynamic Footer
-    try {
-        const footerData = JSON.parse(localStorage.getItem('dentalab_footer'));
-        if (footerData) {
-            const taglineEl = document.getElementById('footer-tagline');
-            const addressEl = document.getElementById('footer-address');
-            if (taglineEl && footerData.tagline) taglineEl.textContent = footerData.tagline;
-            if (addressEl && footerData.address) addressEl.innerHTML = footerData.address.replace(/\n/g, '<br/>');
-        }
-    } catch (e) {
-        console.error("Erro ao carregar footer:", e);
-    }
-
+    // Outer scope carousel variables
     const track = document.getElementById('testimonial-track');
-    if (track && testimonials.length > 0) {
-        track.innerHTML = testimonials.map(dep => `
-            <div class="w-[85%] md:w-[calc(31%-16px)] shrink-0 bg-white/5 p-8 rounded-[24px] border border-white/10 backdrop-blur-md flex flex-col justify-between min-h-[250px]">
-                <div>
-                    <div class="flex gap-1 mb-4 text-amber-400">
-                        ${Array.from({ length: dep.stars || 5 }).map(() => `
-                            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-                        `).join('')}
-                    </div>
-                    <p class="text-sm italic text-white/90 leading-relaxed mb-6">
-                        "${dep.text}"
-                    </p>
-                </div>
-                <div class="flex items-center gap-3">
-                    ${dep.image ? `
-                        <img src="${dep.image}" alt="${dep.name}" class="w-10 h-10 rounded-full object-cover border border-white/20 shadow-sm"/>
-                    ` : `
-                        <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white border border-white/20"><span class="material-symbols-outlined">person</span></div>
-                    `}
-                    <div>
-                        <p class="font-bold text-white text-xs">${dep.name}</p>
-                        <p class="text-[10px] text-[#b4c6f4] font-medium">${dep.role}</p>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // Call render
-    renderLatestArticles();
-
-    // Testimonial Carousel Autoplay Logic
     let currentSlide = 0;
     let autoplayInterval = null;
     let isTransitioning = false;
     let originalLength = 5;
-
-    if (track) {
-        // Clone first 3 elements to allow seamless infinite looping
-        const originalCards = Array.from(track.children);
-        originalLength = originalCards.length;
-        originalCards.slice(0, 3).forEach(card => {
-            const clone = card.cloneNode(true);
-            track.appendChild(clone);
-        });
-    }
 
     function updateCarousel(instant = false) {
         if (!track) return;
@@ -997,7 +852,190 @@
         autoplayInterval = setInterval(nextSlide, 3500); // slide every 3.5s
     }
 
-    // Handle window resize dynamically
+    function setupCarouselClones() {
+        if (!track) return;
+        
+        // Remove existing clones to avoid duplicates
+        const existingClones = track.querySelectorAll('.carousel-clone');
+        existingClones.forEach(c => c.remove());
+
+        const originalCards = Array.from(track.children);
+        originalLength = originalCards.length;
+        originalCards.slice(0, 3).forEach(card => {
+            const clone = card.cloneNode(true);
+            clone.classList.add('carousel-clone');
+            track.appendChild(clone);
+        });
+        currentSlide = 0;
+        updateCarousel(true);
+        resetAutoplay();
+    }
+
+    // Master function to apply all customizable settings
+    function applySettings() {
+        // Load testimonials
+        let testimonials = [];
+        try {
+            let stored = localStorage.getItem('dentalab_testimonials');
+            if (!stored) {
+                stored = JSON.stringify(defaultTestimonials);
+                localStorage.setItem('dentalab_testimonials', stored);
+            }
+            testimonials = JSON.parse(stored);
+        } catch (e) {
+            console.error("Erro ao carregar depoimentos:", e);
+            testimonials = [...defaultTestimonials];
+        }
+
+        // Load dynamic Hero Data
+        try {
+            const heroData = JSON.parse(localStorage.getItem('dentalab_hero_data'));
+            if (heroData) {
+                const bgEl = document.getElementById('hero-bg');
+                const titleEl = document.getElementById('hero-title');
+                const subtitleEl = document.getElementById('hero-subtitle');
+                
+                if (bgEl && heroData.bg) bgEl.src = heroData.bg;
+                if (titleEl && heroData.title) titleEl.textContent = heroData.title;
+                if (subtitleEl && heroData.subtitle) subtitleEl.textContent = heroData.subtitle;
+            }
+        } catch (e) {
+            console.error("Erro ao carregar dados do Hero:", e);
+        }
+
+        // Load dynamic Differentials
+        try {
+            const diffData = JSON.parse(localStorage.getItem('dentalab_differentials'));
+            if (diffData) {
+                const titleEl = document.getElementById('diff-section-title');
+                if (titleEl && diffData.title) titleEl.textContent = diffData.title;
+                diffData.items.forEach((item, i) => {
+                    const tEl = document.getElementById(`diff-${i+1}-title`);
+                    const pEl = document.getElementById(`diff-${i+1}-text`);
+                    if (tEl && item.title) tEl.textContent = item.title;
+                    if (pEl && item.text) pEl.textContent = item.text;
+                });
+            }
+        } catch (e) {
+            console.error("Erro ao carregar diferenciais:", e);
+        }
+
+        // Load dynamic Services
+        try {
+            const svcTitle = JSON.parse(localStorage.getItem('dentalab_services_title'));
+            const svcData = JSON.parse(localStorage.getItem('dentalab_services'));
+            if (svcTitle) {
+                const el = document.getElementById('svc-section-title');
+                if (el) el.textContent = svcTitle;
+            }
+            if (svcData && svcData.length > 0) {
+                const grid = document.getElementById('svc-cards-grid');
+                if (grid) {
+                    grid.innerHTML = svcData.map(svc => `
+                        <div class="relative rounded-[24px] overflow-hidden shadow-md hover:shadow-xl hover:translate-y-[-6px] transition-all duration-300 group border border-outline-variant/10 h-[250px]">
+                            <img alt="${svc.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src="${svc.image}"/>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#05133b]/95 via-[#05133b]/30 to-transparent z-10"></div>
+                            <div class="absolute inset-0 p-4 flex flex-col justify-end z-20">
+                                <h3 class="text-base font-extrabold text-white mb-1 tracking-tight group-hover:translate-x-1 transition-transform duration-300">${svc.name}</h3>
+                                <p class="text-[#dfe2ec] text-[11px] leading-relaxed font-medium">${svc.desc}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        } catch (e) {
+            console.error("Erro ao carregar serviços:", e);
+        }
+
+        // Load dynamic CTA
+        try {
+            const ctaData = JSON.parse(localStorage.getItem('dentalab_cta'));
+            if (ctaData) {
+                const titleEl = document.getElementById('cta-title');
+                const subEl = document.getElementById('cta-subtitle');
+                const btnEl = document.getElementById('cta-btn');
+                if (titleEl && ctaData.title) titleEl.textContent = ctaData.title;
+                if (subEl && ctaData.subtitle) subEl.innerHTML = ctaData.subtitle;
+                if (btnEl && ctaData.btn) {
+                    btnEl.innerHTML = ctaData.btn + ' <span class="material-symbols-outlined text-[18px]">arrow_forward</span>';
+                }
+            }
+        } catch (e) {
+            console.error("Erro ao carregar CTA:", e);
+        }
+
+        // Load dynamic Footer
+        try {
+            const footerData = JSON.parse(localStorage.getItem('dentalab_footer'));
+            if (footerData) {
+                const taglineEl = document.getElementById('footer-tagline');
+                const addressEl = document.getElementById('footer-address');
+                if (taglineEl && footerData.tagline) taglineEl.textContent = footerData.tagline;
+                if (addressEl && footerData.address) addressEl.innerHTML = footerData.address.replace(/\n/g, '<br/>');
+            }
+        } catch (e) {
+            console.error("Erro ao carregar footer:", e);
+        }
+
+        if (track && testimonials.length > 0) {
+            track.innerHTML = testimonials.map(dep => `
+                <div class="w-[85%] md:w-[calc(31%-16px)] shrink-0 bg-white/5 p-8 rounded-[24px] border border-white/10 backdrop-blur-md flex flex-col justify-between min-h-[250px]">
+                    <div>
+                        <div class="flex gap-1 mb-4 text-amber-400">
+                            ${Array.from({ length: dep.stars || 5 }).map(() => `
+                                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+                            `).join('')}
+                        </div>
+                        <p class="text-sm italic text-white/90 leading-relaxed mb-6">
+                            "${dep.text}"
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        ${dep.image ? `
+                            <img src="${dep.image}" alt="${dep.name}" class="w-10 h-10 rounded-full object-cover border border-white/20 shadow-sm"/>
+                        ` : `
+                            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white border border-white/20"><span class="material-symbols-outlined">person</span></div>
+                        `}
+                        <div>
+                            <p class="font-bold text-white text-xs">${dep.name}</p>
+                            <p class="text-[10px] text-[#b4c6f4] font-medium">${dep.role}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            setupCarouselClones();
+        }
+    }
+
+    // Initial render from local cache or defaults
+    applySettings();
+    renderLatestArticles();
+
+    // Import Supabase and sync in background
+    import('./assets/js/supabase-client.js')
+        .then(async (module) => {
+            if (module.isSupabaseConfigured() && module.supabase) {
+                try {
+                    const { data, error } = await module.supabase
+                        .from('site_settings')
+                        .select('*');
+                    if (!error && data) {
+                        data.forEach(item => {
+                            localStorage.setItem('dentalab_' + item.key, JSON.stringify(item.value));
+                        });
+                        // Re-apply settings with the fresh data from the cloud
+                        applySettings();
+                    }
+                } catch (e) {
+                    console.error("Erro ao sincronizar configurações do Supabase:", e);
+                }
+            }
+        })
+        .catch(err => {
+            console.warn("Supabase client não pôde ser carregado no index:", err);
+        });
+
     window.addEventListener('resize', () => {
         updateCarousel(true);
     });

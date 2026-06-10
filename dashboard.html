@@ -788,6 +788,46 @@
         let isSupabaseConfigured = () => false;
         let currentLeadsList = [];
 
+        // Helper genérico para salvar configurações no Supabase/localStorage
+        async function saveSiteSetting(key, value) {
+            if (isSupabaseConfigured() && supabase) {
+                try {
+                    const { error } = await supabase
+                        .from('site_settings')
+                        .upsert({ key: key, value: value });
+                    if (error) {
+                        console.error(`Erro ao salvar ${key} no Supabase:`, error);
+                    }
+                } catch (err) {
+                    console.error(`Erro de rede ao salvar ${key} no Supabase:`, err);
+                }
+            }
+            localStorage.setItem('dentalab_' + key, JSON.stringify(value));
+            return true;
+        }
+
+        // Helper genérico para sincronizar configurações do Supabase para o localStorage
+        async function syncSiteSettingsFromSupabase() {
+            if (isSupabaseConfigured() && supabase) {
+                try {
+                    const { data, error } = await supabase
+                        .from('site_settings')
+                        .select('*');
+                    if (!error && data) {
+                        data.forEach(item => {
+                            localStorage.setItem('dentalab_' + item.key, JSON.stringify(item.value));
+                        });
+                        // Recarrega os dados na tela se o editor estiver ativo
+                        if (window.loadAllEditorData) {
+                            window.loadAllEditorData();
+                        }
+                    }
+                } catch (err) {
+                    console.error("Erro ao sincronizar do Supabase:", err);
+                }
+            }
+        }
+
         import('./assets/js/supabase-client.js')
             .then(async module => {
                 supabase = module.supabase;
@@ -802,6 +842,8 @@
                             window.location.href = 'login.html';
                             return;
                         }
+                        // Sincroniza as configurações do site
+                        await syncSiteSettingsFromSupabase();
                     } catch (err) {
                         console.error("Falha ao validar sessão do Supabase:", err);
                     }
@@ -1635,9 +1677,9 @@
             }
         }
 
-        function saveGalleryPresets(presets) {
+        async function saveGalleryPresets(presets) {
             try {
-                localStorage.setItem('dentalab_gallery_presets', JSON.stringify(presets));
+                await saveSiteSetting('gallery_presets', presets);
             } catch (e) {
                 console.error("Erro ao salvar gallery presets:", e);
             }
@@ -1792,7 +1834,7 @@
 
         const heroEditForm = document.getElementById('hero-edit-form');
         if (heroEditForm) {
-            heroEditForm.addEventListener('submit', function(e) {
+            heroEditForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const heroData = {
                     title: document.getElementById('editor-hero-title').value.trim(),
@@ -1800,7 +1842,7 @@
                     bg: document.getElementById('editor-hero-bg').value.trim()
                 };
                 try {
-                    localStorage.setItem('dentalab_hero_data', JSON.stringify(heroData));
+                    await saveSiteSetting('hero_data', heroData);
                     showToast("Banner principal (Hero) atualizado com sucesso!");
                 } catch (err) {
                     console.error("Erro ao salvar Hero:", err);
@@ -1848,9 +1890,9 @@
             }
         };
 
-        window.saveTestimonials = function(list) {
+        window.saveTestimonials = async function(list) {
             try {
-                localStorage.setItem('dentalab_testimonials', JSON.stringify(list));
+                await saveSiteSetting('testimonials', list);
             } catch (e) {
                 console.error("Erro ao salvar depoimentos:", e);
             }
@@ -2133,7 +2175,7 @@
 
         const diffForm = document.getElementById('differentials-edit-form');
         if (diffForm) {
-            diffForm.addEventListener('submit', function(e) {
+            diffForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const data = {
                     title: document.getElementById('editor-diff-title').value.trim(),
@@ -2142,7 +2184,7 @@
                         text: document.getElementById(`editor-diff-${i}-text`).value.trim()
                     }))
                 };
-                localStorage.setItem('dentalab_differentials', JSON.stringify(data));
+                await saveSiteSetting('differentials', data);
                 showToast("Diferenciais atualizados com sucesso!");
             });
         }
@@ -2179,7 +2221,7 @@
 
         const svcForm = document.getElementById('services-edit-form');
         if (svcForm) {
-            svcForm.addEventListener('submit', function(e) {
+            svcForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const title = document.getElementById('editor-svc-title').value.trim();
                 const services = [];
@@ -2192,8 +2234,8 @@
                     });
                     i++;
                 }
-                localStorage.setItem('dentalab_services_title', JSON.stringify(title));
-                localStorage.setItem('dentalab_services', JSON.stringify(services));
+                await saveSiteSetting('services_title', title);
+                await saveSiteSetting('services', services);
                 showToast("Serviços atualizados com sucesso!");
             });
         }
@@ -2214,14 +2256,14 @@
 
         const ctaForm = document.getElementById('cta-edit-form');
         if (ctaForm) {
-            ctaForm.addEventListener('submit', function(e) {
+            ctaForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const data = {
                     title: document.getElementById('editor-cta-title').value.trim(),
                     subtitle: document.getElementById('editor-cta-subtitle').value.trim(),
                     btn: document.getElementById('editor-cta-btn').value.trim()
                 };
-                localStorage.setItem('dentalab_cta', JSON.stringify(data));
+                await saveSiteSetting('cta', data);
                 showToast("CTA atualizado com sucesso!");
             });
         }
@@ -2250,7 +2292,7 @@
 
         const footerForm = document.getElementById('footer-edit-form');
         if (footerForm) {
-            footerForm.addEventListener('submit', function(e) {
+            footerForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const data = {
                     phone: document.getElementById('editor-footer-phone').value.trim(),
@@ -2261,7 +2303,7 @@
                     whatsapp: document.getElementById('editor-footer-whatsapp').value.trim(),
                     linkedin: document.getElementById('editor-footer-linkedin').value.trim()
                 };
-                localStorage.setItem('dentalab_footer', JSON.stringify(data));
+                await saveSiteSetting('footer', data);
                 showToast("Informações de contato atualizadas com sucesso!");
             });
         }
@@ -2296,9 +2338,9 @@
             }
         };
 
-        function saveFaqItems(items) {
+        async function saveFaqItems(items) {
             try {
-                localStorage.setItem('dentalab_faq', JSON.stringify(items));
+                await saveSiteSetting('faq', items);
             } catch (e) {
                 console.error("Erro ao salvar FAQ:", e);
                 showToast("Erro ao salvar perguntas frequentes.");

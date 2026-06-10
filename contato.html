@@ -528,6 +528,25 @@
     // Render FAQ on page load
     renderFaq();
 
+    // Sincroniza o FAQ do Supabase se configurado
+    if (isSupabaseConfigured() && supabase) {
+        try {
+            supabase
+                .from('site_settings')
+                .select('*')
+                .eq('key', 'faq')
+                .maybeSingle()
+                .then(({ data, error }) => {
+                    if (!error && data && data.value) {
+                        localStorage.setItem('dentalab_faq', JSON.stringify(data.value));
+                        renderFaq(); // Re-renderiza com os dados atualizados do banco
+                    }
+                });
+        } catch (e) {
+            console.error("Erro ao sincronizar FAQ do Supabase:", e);
+        }
+    }
+
     // Form Submission & Success Modal
     const contactForm = document.getElementById('main-contact-form');
     const successModal = document.getElementById('success-modal');
