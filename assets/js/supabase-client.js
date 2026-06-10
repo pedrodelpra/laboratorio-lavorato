@@ -1,14 +1,17 @@
 // Cliente Supabase Centralizado para o projeto Laboratório Lavorato
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-// Tenta obter credenciais do Vite (env) ou do LocalStorage (dinâmico)
+// Tenta obter credenciais do Vite (env), do LocalStorage (dinâmico) ou usa as credenciais padrão do projeto
+const defaultUrl = 'https://vfilmjjotmhqfnfielyo.supabase.co';
+const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmaWxtampvdG1ocWZuZmllbHlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMjAxNDksImV4cCI6MjA5NjU5NjE0OX0.ccuSCXGooX1WY8K27Gv0ZKtrmY3mxNrNVQkNANFMlBo';
+
 const supabaseUrl = (import.meta.env && import.meta.env.VITE_SUPABASE_URL)
   || localStorage.getItem('supabase_url')
-  || '';
+  || defaultUrl;
 
 const supabaseAnonKey = (import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY)
   || localStorage.getItem('supabase_anon_key')
-  || '';
+  || defaultKey;
 
 export const isSupabaseConfigured = () => {
     return supabaseUrl && supabaseAnonKey;
