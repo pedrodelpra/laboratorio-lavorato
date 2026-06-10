@@ -67,6 +67,20 @@
             </button>
         </nav>
 
+        <!-- Connection Status -->
+        <div class="p-5 border-t border-white/5 flex flex-col gap-2">
+            <span class="text-[9px] uppercase tracking-widest text-white/30 font-bold">Conexão Banco de Dados</span>
+            <div id="db-status-container" class="flex flex-col gap-1.5">
+                <div class="flex items-center gap-2">
+                    <span id="db-status-dot" class="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                    <span id="db-status-text" class="text-xs text-white/70 font-medium">Verificando...</span>
+                </div>
+                <button id="btn-config-supabase" onclick="openSupabaseConfigModal()" class="text-[10px] text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1 mt-1 justify-start">
+                    <span class="material-symbols-outlined text-xs">settings</span> Configurar Conexão
+                </button>
+            </div>
+        </div>
+
         <!-- Log Out Section -->
         <div class="p-5 border-t border-white/5">
             <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-3 border border-red-500/20 hover:border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 active:scale-95">
@@ -717,6 +731,46 @@
             <div class="flex justify-end pt-4 border-t border-slate-100">
                 <button type="button" onclick="closeGalleryPickerModal()" class="bg-slate-50 hover:bg-slate-100 text-slate-500 px-5 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-wider transition-all border border-slate-150">
                     Fechar
+            </div>
+        </div>
+    </div>
+
+    <!-- SUPABASE CONFIG MODAL -->
+    <div id="supabase-config-modal" class="fixed inset-0 z-[70] bg-primary/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-[24px] max-w-md w-full p-6 shadow-xl relative animate-fade-in border border-slate-100">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px] text-primary">settings_ethernet</span>
+                    Configurar Conexão Supabase
+                </h3>
+                <button type="button" onclick="closeSupabaseConfigModal()" class="w-8 h-8 rounded-full flex items-center justify-center border border-slate-100 hover:bg-slate-50 transition-colors">
+                    <span class="material-symbols-outlined text-sm text-slate-500">close</span>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Insira as credenciais do seu projeto Supabase abaixo para forçar a conexão direta neste navegador.
+                </p>
+                <div class="space-y-1">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Supabase URL</label>
+                    <input type="text" id="config-supabase-url" placeholder="https://xxxxxx.supabase.co" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-primary focus:outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/30 transition-all" />
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Supabase Anon Key</label>
+                    <textarea id="config-supabase-anon-key" rows="3" placeholder="eyJhbGci..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-primary focus:outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/30 transition-all"></textarea>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[10px] text-amber-700 leading-normal">
+                    <strong>Importante:</strong> Esta configuração é salva localmente no navegador. Para que todos os visitantes reais do site vejam as alterações, você também deve configurar as variáveis de ambiente <code>VITE_SUPABASE_URL</code> e <code>VITE_SUPABASE_ANON_KEY</code> nas configurações do seu projeto na Vercel.
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-end gap-2.5">
+                <button type="button" onclick="clearSupabaseConfig()" class="bg-red-50 hover:bg-red-100 text-red-500 px-4 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-wider transition-all border border-red-150">
+                    Limpar
+                </button>
+                <button type="button" onclick="saveSupabaseConfig()" class="bg-primary hover:opacity-90 active:scale-95 text-white px-5 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-wider transition-all shadow-sm">
+                    Salvar e Recarregar
                 </button>
             </div>
         </div>
@@ -833,7 +887,11 @@
                 supabase = module.supabase;
                 isSupabaseConfigured = module.isSupabaseConfigured;
                 
-                if (isSupabaseConfigured()) {
+                const dbStatusDot = document.getElementById('db-status-dot');
+                const dbStatusText = document.getElementById('db-status-text');
+                const btnConfigSupabase = document.getElementById('btn-config-supabase');
+                
+                if (isSupabaseConfigured() && supabase) {
                     try {
                         const { data: { session }, error } = await supabase.auth.getSession();
                         if (error || !session || !(await module.isEmailAuthorized(session.user?.email))) {
@@ -844,16 +902,43 @@
                         }
                         // Sincroniza as configurações do site
                         await syncSiteSettingsFromSupabase();
+                        
+                        // Atualiza indicador de status para conectado
+                        if (dbStatusDot && dbStatusText) {
+                            dbStatusDot.className = "w-2.5 h-2.5 rounded-full bg-green-500";
+                            dbStatusText.textContent = "Conectado";
+                        }
                     } catch (err) {
                         console.error("Falha ao validar sessão do Supabase:", err);
+                        if (dbStatusDot && dbStatusText) {
+                            dbStatusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+                            dbStatusText.textContent = "Erro de Conexão";
+                        }
                     }
                     // Recarrega os leads se estiver autenticado e configurado
                     renderLeads();
                     await renderBlogArticles();
+                } else {
+                    // Supabase não configurado localmente nem via build
+                    if (dbStatusDot && dbStatusText) {
+                        dbStatusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
+                        dbStatusText.textContent = "Modo Offline (Local)";
+                    }
+                    if (btnConfigSupabase) {
+                        btnConfigSupabase.classList.remove('hidden');
+                    }
+                    renderLeads();
+                    renderBlogArticles();
                 }
             })
             .catch(err => {
                 console.warn("Supabase client não pôde ser carregado:", err);
+                const dbStatusDot = document.getElementById('db-status-dot');
+                const dbStatusText = document.getElementById('db-status-text');
+                if (dbStatusDot && dbStatusText) {
+                    dbStatusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+                    dbStatusText.textContent = "Erro de Carregamento";
+                }
             });
 
         // Logout
@@ -2471,6 +2556,47 @@
             [items[index], items[newIndex]] = [items[newIndex], items[index]];
             saveFaqItems(items);
             renderFaqList();
+        };
+
+        window.openSupabaseConfigModal = function() {
+            document.getElementById('config-supabase-url').value = localStorage.getItem('supabase_url') || '';
+            document.getElementById('config-supabase-anon-key').value = localStorage.getItem('supabase_anon_key') || '';
+            document.getElementById('supabase-config-modal').classList.remove('hidden');
+        };
+
+        window.closeSupabaseConfigModal = function() {
+            document.getElementById('supabase-config-modal').classList.add('hidden');
+        };
+
+        window.saveSupabaseConfig = function() {
+            const url = document.getElementById('config-supabase-url').value.trim();
+            const key = document.getElementById('config-supabase-anon-key').value.trim();
+            
+            if (url) {
+                localStorage.setItem('supabase_url', url);
+            } else {
+                localStorage.removeItem('supabase_url');
+            }
+            
+            if (key) {
+                localStorage.setItem('supabase_anon_key', key);
+            } else {
+                localStorage.removeItem('supabase_anon_key');
+            }
+            
+            showToast("Configurações salvas! Recarregando...");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        };
+
+        window.clearSupabaseConfig = function() {
+            localStorage.removeItem('supabase_url');
+            localStorage.removeItem('supabase_anon_key');
+            showToast("Configurações limpas! Recarregando...");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         };
 
         // ===== MASTER LOAD FOR EDITOR TAB =====
