@@ -1208,19 +1208,59 @@
         }
 
         // Render Blog Articles inside Dashboard Table
-        function renderBlogArticles() {
+        async function renderBlogArticles() {
             const tableBody = document.getElementById('cms-blog-table-body');
             const emptyState = document.getElementById('blog-empty-state');
-            const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+            currentArticlesList = [];
 
-            if(articles.length === 0) {
+            if (isSupabaseConfigured() && supabase) {
+                try {
+                    const { data, error } = await supabase
+                        .from('blog_posts')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) {
+                        console.error("Erro ao buscar artigos do Supabase:", error);
+                        loadArticlesFromLocalStorage();
+                    } else {
+                        currentArticlesList = data.map(item => ({
+                            id: item.id,
+                            title: item.title,
+                            category: item.category,
+                            readtime: item.readtime,
+                            image: item.image,
+                            summary: item.summary,
+                            content: item.content,
+                            date: item.date,
+                            hasFooter: item.has_footer
+                        }));
+                    }
+                } catch (err) {
+                    console.error("Erro de rede ao buscar artigos do Supabase:", err);
+                    loadArticlesFromLocalStorage();
+                }
+            } else {
+                loadArticlesFromLocalStorage();
+            }
+
+            function loadArticlesFromLocalStorage() {
+                try {
+                    currentArticlesList = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+                } catch (e) {
+                    console.error("Erro ao ler artigos do localStorage:", e);
+                    currentArticlesList = [];
+                }
+            }
+
+            if(currentArticlesList.length === 0) {
                 tableBody.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 return;
             }
             emptyState.classList.add('hidden');
 
-            const mappedArticles = articles.map((article, index) => ({ ...article, originalIndex: index }));
+            const mappedArticles = currentArticlesList.map((article, index) => ({ ...article, originalIndex: index }));
             mappedArticles.sort((a, b) => parseDate(b.date) - parseDate(a.date));
 
             tableBody.innerHTML = mappedArticles.map((article) => {
@@ -1267,8 +1307,7 @@
 
         // Load article for editing
         window.editArticle = function(index) {
-            const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
-            const article = articles[index];
+            const article = currentArticlesList[index];
             if (!article) return;
 
             editingArticleIndex = index;
@@ -1302,36 +1341,56 @@
         };
 
         // Delete article
-        window.deleteArticle = function(index) {
-            if(confirm("Tem certeza que deseja remover este artigo do Blog do site?")) {
-                try {
-                    const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
-                    articles.splice(index, 1);
-                    localStorage.setItem('dentalab_blog_articles', JSON.stringify(articles));
-                    
-                    // If the deleted article was currently being edited, cancel edit mode
-                    if (editingArticleIndex === index) {
-                        editingArticleIndex = null;
-                    } else if (editingArticleIndex !== null && editingArticleIndex > index) {
-                        // Adjust index if we deleted an item before the edited item
-                        editingArticleIndex--;
-                    }
+        window.deleteArticle = async function(index) {
+            const article = currentArticlesList[index];
+            if (!article) return;
 
-                    renderBlogArticles();
-                    showToast("Artigo removido com sucesso!");
-                } catch (e) {
-                    console.error("Erro ao remover artigo:", e);
-                    showToast("Erro ao remover artigo.");
+            if(confirm("Tem certeza que deseja remover este artigo do Blog do site?")) {
+                if (isSupabaseConfigured() && supabase && article.id) {
+                    try {
+                        const { error } = await supabase
+                            .from('blog_posts')
+                            .delete()
+                            .eq('id', article.id);
+
+                        if (error) {
+                            console.error("Erro ao deletar post no Supabase:", error);
+                            showToast("Erro ao excluir o artigo no banco.");
+                        } else {
+                            if (editingArticleIndex === index) editingArticleIndex = null;
+                            await renderBlogArticles();
+                            showToast("Artigo removido com sucesso!");
+                        }
+                    } catch (err) {
+                        console.error("Erro ao se conectar ao Supabase:", err);
+                        showToast("Erro de rede ao remover artigo.");
+                    }
+                } else {
+                    try {
+                        const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+                        articles.splice(index, 1);
+                        localStorage.setItem('dentalab_blog_articles', JSON.stringify(articles));
+                        
+                        if (editingArticleIndex === index) {
+                            editingArticleIndex = null;
+                        } else if (editingArticleIndex !== null && editingArticleIndex > index) {
+                            editingArticleIndex--;
+                        }
+
+                        renderBlogArticles();
+                        showToast("Artigo removido localmente!");
+                    } catch (e) {
+                        console.error("Erro ao remover artigo local:", e);
+                        showToast("Erro ao remover artigo.");
+                    }
                 }
             }
         };
 
         // Submit CMS Blog Form
         const blogForm = document.getElementById('cms-blog-form');
-        blogForm.addEventListener('submit', function(e) {
+        blogForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
             
             const contentText = document.getElementById('cms-content').value.trim();
             const words = contentText.split(/\s+/).filter(Boolean).length;
@@ -1342,37 +1401,88 @@
 
             const articleData = {
                 title: document.getElementById('cms-title').value.trim(),
-                category: editingArticleIndex !== null ? (articles[editingArticleIndex].category || 'geral') : 'geral',
+                category: editingArticleIndex !== null ? (currentArticlesList[editingArticleIndex].category || 'geral') : 'geral',
                 readtime: readtimeText,
                 image: document.getElementById('cms-image').value.trim(),
-                imageAlt: document.getElementById('cms-image-alt').value.trim(),
                 summary: summaryText,
                 content: contentText,
                 date: document.getElementById('cms-date').value, // Storing YYYY-MM-DD
-                hasFooter: document.getElementById('cms-hasfooter').checked
+                has_footer: document.getElementById('cms-hasfooter').checked
             };
 
-            try {
-                if (editingArticleIndex !== null) {
-                    // Update existing article
-                    articles[editingArticleIndex] = articleData;
-                    showToast("Artigo atualizado com sucesso no Blog!");
-                } else {
-                    // Add new article at the beginning
-                    articles.unshift(articleData);
-                    showToast("Artigo publicado com sucesso no Blog!");
-                }
+            const submitBtn = document.getElementById('cms-submit-btn');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Salvando...";
 
-                // Limit to 100 articles to avoid exceeding localStorage quota
-                if (articles.length > 100) {
-                    articles.splice(100);
-                }
+            if (isSupabaseConfigured() && supabase) {
+                try {
+                    if (editingArticleIndex !== null) {
+                        const originalArticle = currentArticlesList[editingArticleIndex];
+                        const { error } = await supabase
+                            .from('blog_posts')
+                            .update(articleData)
+                            .eq('id', originalArticle.id);
 
-                localStorage.setItem('dentalab_blog_articles', JSON.stringify(articles));
-            } catch (e) {
-                console.error("Erro ao salvar artigo no localStorage:", e);
-                showToast("Erro ao salvar o artigo. O limite de armazenamento pode ter sido excedido.");
+                        if (error) {
+                            console.error("Erro ao salvar artigo no Supabase:", error);
+                            showToast("Erro ao salvar alterações no banco.");
+                        } else {
+                            showToast("Artigo atualizado com sucesso no Blog!");
+                            editingArticleIndex = null;
+                            closeBlogModal();
+                        }
+                    } else {
+                        const { error } = await supabase
+                            .from('blog_posts')
+                            .insert([articleData]);
+
+                        if (error) {
+                            console.error("Erro ao publicar artigo no Supabase:", error);
+                            showToast("Erro ao publicar artigo no banco.");
+                        } else {
+                            showToast("Artigo publicado com sucesso no Blog!");
+                            closeBlogModal();
+                        }
+                    }
+                } catch (err) {
+                    console.error("Erro ao conectar ao Supabase:", err);
+                    showToast("Erro de rede ao salvar artigo.");
+                }
+            } else {
+                // Fallback para localStorage
+                try {
+                    const articles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
+                    const localArticleData = {
+                        ...articleData,
+                        imageAlt: document.getElementById('cms-image-alt').value.trim(),
+                        hasFooter: articleData.has_footer
+                    };
+                    delete localArticleData.has_footer;
+
+                    if (editingArticleIndex !== null) {
+                        articles[editingArticleIndex] = localArticleData;
+                        showToast("Artigo atualizado localmente!");
+                        editingArticleIndex = null;
+                    } else {
+                        articles.unshift(localArticleData);
+                        showToast("Artigo publicado localmente!");
+                    }
+
+                    if (articles.length > 100) {
+                        articles.splice(100);
+                    }
+
+                    localStorage.setItem('dentalab_blog_articles', JSON.stringify(articles));
+                    closeBlogModal();
+                } catch (e) {
+                    console.error("Erro ao salvar artigo local:", e);
+                    showToast("Erro ao salvar no cache local.");
+                }
             }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
             
             // Save image to gallery database if checked
             try {
@@ -1398,8 +1508,7 @@
             }
             
             // Close modal & refresh list
-            closeBlogModal();
-            renderBlogArticles();
+            await renderBlogArticles();
         });
 
         // Real-Time SEO and Word/Paragraph Analyzer

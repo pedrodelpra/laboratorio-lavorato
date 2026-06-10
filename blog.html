@@ -412,15 +412,20 @@
         tendencias: 'Tendências da Odontologia'
     };
 
-    // Seed articles in localStorage safely (only if empty — never overwrite admin-managed data)
-    try {
-        const storedArticles = localStorage.getItem('dentalab_blog_articles');
-        if (!storedArticles || JSON.parse(storedArticles).length === 0) {
-            localStorage.setItem('dentalab_blog_articles', JSON.stringify(defaultArticles));
-        }
-    } catch (e) {
-        console.error("Erro ao gerenciar seed de artigos:", e);
-    }
+    // Supabase Dynamic Client integration
+    let supabase = null;
+    let isSupabaseConfigured = () => false;
+
+    import('./assets/js/supabase-client.js')
+        .then(module => {
+            supabase = module.supabase;
+            isSupabaseConfigured = module.isSupabaseConfigured;
+            loadAndRenderArticles();
+        })
+        .catch(err => {
+            console.warn("Supabase client não pôde ser carregado no blog:", err);
+            loadAndRenderArticles();
+        });
 
     // Helper to check if a date is in the future
     function isFutureDate(dateStr) {
@@ -452,13 +457,53 @@
     let visibleCountLimit = 3; // Start showing 3 grid articles to make pagination clear
     let allArticles = [];
 
-    function loadAndRenderArticles() {
+    async function loadAndRenderArticles() {
         let rawArticles = [];
-        try {
-            rawArticles = JSON.parse(localStorage.getItem('dentalab_blog_articles') || '[]');
-        } catch (e) {
-            console.error("Erro ao carregar artigos:", e);
-            rawArticles = [...defaultArticles]; // Fallback to presets if blocked
+
+        if (isSupabaseConfigured() && supabase) {
+            try {
+                const { data, error } = await supabase
+                    .from('blog_posts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error("Erro ao carregar artigos do Supabase:", error);
+                    rawArticles = loadFromLocalStorage();
+                } else {
+                    rawArticles = data.map(item => ({
+                        id: item.id,
+                        title: item.title,
+                        category: item.category,
+                        readtime: item.readtime,
+                        image: item.image,
+                        summary: item.summary,
+                        content: item.content,
+                        date: item.date,
+                        hasFooter: item.has_footer
+                    }));
+                }
+            } catch (err) {
+                console.error("Falha ao buscar artigos do Supabase:", err);
+                rawArticles = loadFromLocalStorage();
+            }
+        } else {
+            rawArticles = loadFromLocalStorage();
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const storedArticles = localStorage.getItem('dentalab_blog_articles');
+                if (!storedArticles) {
+                    // Seed inicial se o localStorage estiver limpo pela primeira vez
+                    localStorage.setItem('dentalab_blog_articles', JSON.stringify(defaultArticles));
+                    return [...defaultArticles];
+                }
+                return JSON.parse(storedArticles);
+            } catch (e) {
+                console.error("Erro ao carregar do localStorage:", e);
+                return [...defaultArticles];
+            }
         }
         
         // Filter out future agendados posts for public view
