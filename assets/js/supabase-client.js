@@ -2,11 +2,11 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 // Tenta obter credenciais do Vite (env) ou do LocalStorage (dinâmico)
-const supabaseUrl = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_URL)
+const supabaseUrl = (import.meta.env && import.meta.env.VITE_SUPABASE_URL)
   || localStorage.getItem('supabase_url')
   || '';
 
-const supabaseAnonKey = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY)
+const supabaseAnonKey = (import.meta.env && import.meta.env.VITE_SUPABASE_ANON_KEY)
   || localStorage.getItem('supabase_anon_key')
   || '';
 
