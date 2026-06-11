@@ -343,6 +343,10 @@
                 <div id="acc-hero" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
                     <form id="hero-edit-form" class="space-y-4">
                         <div class="space-y-2">
+                            <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Selo do Banner (Tag Line)</label>
+                            <input required id="editor-hero-tagline" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="Ex: Tradição & Inovação"/>
+                        </div>
+                        <div class="space-y-2">
                             <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Título Principal</label>
                             <input required id="editor-hero-title" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="text" placeholder="Ex: Laboratório de Prótese Dentária com Precisão"/>
                         </div>
@@ -1908,11 +1912,13 @@
         window.loadHeroData = function() {
             try {
                 const defaultHero = {
+                    tagline: "Tradição & Inovação",
                     title: "Laboratório de Prótese Dentária com Precisão e Tecnologia",
                     subtitle: "Parceiro estratégico de clínicas odontológicas na Grande São Paulo, Jundiaí e região. Oferecemos reabilitações completas em Zircônia, CAD/CAM e fluxo 100% digital com rapidez e excelência.",
                     bg: "assets/images/lavorato_hero.png"
                 };
                 const heroData = JSON.parse(localStorage.getItem('dentalab_hero_data')) || defaultHero;
+                document.getElementById('editor-hero-tagline').value = heroData.tagline || 'Tradição & Inovação';
                 document.getElementById('editor-hero-title').value = heroData.title || '';
                 document.getElementById('editor-hero-subtitle').value = heroData.subtitle || '';
                 document.getElementById('editor-hero-bg').value = heroData.bg || '';
@@ -1926,6 +1932,7 @@
             heroEditForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const heroData = {
+                    tagline: document.getElementById('editor-hero-tagline').value.trim(),
                     title: document.getElementById('editor-hero-title').value.trim(),
                     subtitle: document.getElementById('editor-hero-subtitle').value.trim(),
                     bg: document.getElementById('editor-hero-bg').value.trim()

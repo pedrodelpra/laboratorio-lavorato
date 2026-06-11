@@ -193,7 +193,7 @@
             <!-- Desktop Badge -->
             <div class="hidden md:inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full mb-3 transition-all hover:bg-white/15">
                 <span class="material-symbols-outlined text-[18px] text-[#b4c6f4] font-semibold">verified</span>
-                <span class="font-label-md text-label-md tracking-wide font-medium">Tradição & Inovação</span>
+                <span id="hero-tagline" class="font-label-md text-label-md tracking-wide font-medium">Tradição & Inovação</span>
             </div>
             <h1 id="hero-title" class="font-display-lg text-[32px] md:text-[46px] text-white font-extrabold mb-4 leading-[1.15] tracking-tight text-balance">
                 Laboratório de Prótese Dentária com Precisão e Estética
@@ -893,10 +893,12 @@
             const heroData = JSON.parse(localStorage.getItem('dentalab_hero_data'));
             if (heroData) {
                 const bgEl = document.getElementById('hero-bg');
+                const taglineEl = document.getElementById('hero-tagline');
                 const titleEl = document.getElementById('hero-title');
                 const subtitleEl = document.getElementById('hero-subtitle');
                 
                 if (bgEl && heroData.bg) bgEl.src = heroData.bg;
+                if (taglineEl && heroData.tagline) taglineEl.textContent = heroData.tagline;
                 if (titleEl && heroData.title) titleEl.textContent = heroData.title;
                 if (subtitleEl && heroData.subtitle) subtitleEl.textContent = heroData.subtitle;
             }
