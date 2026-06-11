@@ -195,6 +195,11 @@
                     </div>
 
                     <div class="space-y-2">
+                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Meta Descrição</label>
+                        <textarea required id="cms-summary" rows="3" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Escreva uma meta descrição concisa para SEO e buscadores (máx. 160 caracteres)"></textarea>
+                    </div>
+
+                    <div class="space-y-2">
                         <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Data de Publicação</label>
                         <input required id="cms-date" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="date"/>
                     </div>
@@ -204,10 +209,7 @@
                         <input id="cms-image" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Ex: https://images.unsplash.com/photo-..." type="text" oninput="syncGallerySelection()"/>
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Texto Alternativo da Imagem (SEO Alt Text)</label>
-                        <input id="cms-image-alt" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" placeholder="Descreva o que aparece na imagem para ajudar no ranqueamento do Google" type="text"/>
-                    </div>
+                    <input type="hidden" id="cms-image-alt" value=""/>
 
                     <div class="flex items-center gap-2 mt-2">
                         <input type="checkbox" id="cms-save-to-gallery" class="rounded border-slate-300 text-primary focus:ring-primary h-4 w-4"/>
@@ -1449,6 +1451,7 @@
 
             // Populate form
             document.getElementById('cms-title').value = article.title;
+            document.getElementById('cms-summary').value = article.summary || '';
             document.getElementById('cms-image').value = article.image || '';
             document.getElementById('cms-image-alt').value = article.imageAlt || article.title;
             document.getElementById('cms-content').value = article.content;
@@ -1532,7 +1535,7 @@
             const readingMin = Math.max(1, Math.ceil(words / 200));
             const readtimeText = `${readingMin} min de leitura`;
             
-            const summaryText = contentText.length > 160 ? contentText.substring(0, 157) + '...' : contentText;
+            const summaryText = document.getElementById('cms-summary').value.trim();
 
             const articleData = {
                 title: document.getElementById('cms-title').value.trim(),
