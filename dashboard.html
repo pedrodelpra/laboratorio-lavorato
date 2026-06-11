@@ -2356,6 +2356,55 @@
             });
         }
 
+        // ===== ABOUT US EDITOR =====
+        const defaultAbout = {
+            p1: "Fundado originalmente na capital paulista em 1991 e estabelecido no Jardim Messina em Jundiaí há mais de 10 anos, o Laboratório Lavorato une tradição e inovação tecnológica em cada prótese.",
+            p2: "Sob a liderança técnica de Arnaldo Lavorato e gestão de Suely Lavorato, o laboratório acumula mais de 35 anos de experiência e dezenas de milhares de casos entregues a cirurgiões-dentistas, clínicas e hospitais.",
+            p3: "Hoje, oferecemos soluções completas integradas ao fluxo 100% digital e tecnologia CAD/CAM. Nosso compromisso é com a precisão milimétrica, estética natural e com a facilidade no seu dia a dia clínico.",
+            stat1: { value: "1991", label: "Ano de Fundação" },
+            stat2: { value: "35+ Anos", label: "No Mercado" },
+            stat3: { value: "CAD/CAM", label: "Tecnologia Integrada" }
+        };
+
+        window.loadAbout = function() {
+            const data = JSON.parse(localStorage.getItem('dentalab_about')) || defaultAbout;
+            document.getElementById('editor-about-p1').value = data.p1 || '';
+            document.getElementById('editor-about-p2').value = data.p2 || '';
+            document.getElementById('editor-about-p3').value = data.p3 || '';
+            
+            for (let i = 1; i <= 3; i++) {
+                const stat = data[`stat${i}`] || { value: '', label: '' };
+                document.getElementById(`editor-about-stat${i}-value`).value = stat.value || '';
+                document.getElementById(`editor-about-stat${i}-label`).value = stat.label || '';
+            }
+        };
+
+        const aboutForm = document.getElementById('about-edit-form');
+        if (aboutForm) {
+            aboutForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const data = {
+                    p1: document.getElementById('editor-about-p1').value.trim(),
+                    p2: document.getElementById('editor-about-p2').value.trim(),
+                    p3: document.getElementById('editor-about-p3').value.trim(),
+                    stat1: {
+                        value: document.getElementById('editor-about-stat1-value').value.trim(),
+                        label: document.getElementById('editor-about-stat1-label').value.trim()
+                    },
+                    stat2: {
+                        value: document.getElementById('editor-about-stat2-value').value.trim(),
+                        label: document.getElementById('editor-about-stat2-label').value.trim()
+                    },
+                    stat3: {
+                        value: document.getElementById('editor-about-stat3-value').value.trim(),
+                        label: document.getElementById('editor-about-stat3-label').value.trim()
+                    }
+                };
+                await saveSiteSetting('about', data);
+                showToast("Página Sobre Nós atualizada com sucesso!");
+            });
+        }
+
         // ===== FOOTER/CONTACT EDITOR =====
         const defaultFooter = {
             phone: "(11) 94793-7339",
@@ -2607,6 +2656,7 @@
             window.loadDifferentials();
             window.loadServices();
             window.loadCTA();
+            window.loadAbout();
             window.loadFooter();
             window.renderTestimonials();
             window.renderFaqList();
