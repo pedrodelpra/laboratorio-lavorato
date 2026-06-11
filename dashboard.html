@@ -2358,16 +2358,24 @@
 
         // ===== ABOUT US EDITOR =====
         const defaultAbout = {
-            p1: "Fundado originalmente na capital paulista em 1991 e estabelecido no Jardim Messina em Jundiaí há mais de 10 anos, o Laboratório Lavorato une tradição e inovação tecnológica em cada prótese.",
-            p2: "Sob a liderança técnica de Arnaldo Lavorato e gestão de Suely Lavorato, o laboratório acumula mais de 35 anos de experiência e dezenas de milhares de casos entregues a cirurgiões-dentistas, clínicas e hospitais.",
-            p3: "Hoje, oferecemos soluções completas integradas ao fluxo 100% digital e tecnologia CAD/CAM. Nosso compromisso é com a precisão milimétrica, estética natural e com a facilidade no seu dia a dia clínico.",
+            p1: "Fundado originalmente na capital paulista pelos especialistas Arnaldo e Suely Lavorato, o Laboratório Lavorato consolidou sua trajetória com o compromisso de unir a precisão da tecnologia digital ao refinamento e cuidado da prótese artesanal. Hoje, com sede estruturada em Jundiaí/SP, o laboratório atende com agilidade e logística diária a Grande São Paulo, Jundiaí e toda a região.",
+            p2: "Ao longo dos anos, acompanhando de perto a evolução da odontologia, incorporamos fluxos digitais e aperfeiçoamos nossos processos, sem abrir mão do cuidado artesanal que consolidou nossa marca.",
+            p3: "Hoje, seguimos ao lado de cirurgiões-dentistas, clínicas, hospitais e profissionais de odontologia e saúde que enxergam a prótese como parte fundamental da experiência do paciente e entendem a importância de contar com um parceiro técnico altamente confiável.",
             stat1: { value: "1991", label: "Ano de Fundação" },
             stat2: { value: "35+ Anos", label: "No Mercado" },
             stat3: { value: "CAD/CAM", label: "Tecnologia Integrada" }
         };
 
         window.loadAbout = function() {
-            const data = JSON.parse(localStorage.getItem('dentalab_about')) || defaultAbout;
+            let data = JSON.parse(localStorage.getItem('dentalab_about')) || defaultAbout;
+            
+            // Auto-migração: se os dados atuais forem os placeholders de rascunho antigos, atualiza para o texto real
+            if (data.p1 && (data.p1.includes("capital paulista em 1991") || data.p1.includes("Jardim Messina em Jundiaí"))) {
+                data = defaultAbout;
+                localStorage.setItem('dentalab_about', JSON.stringify(defaultAbout));
+                saveSiteSetting('about', defaultAbout);
+            }
+            
             document.getElementById('editor-about-p1').value = data.p1 || '';
             document.getElementById('editor-about-p2').value = data.p2 || '';
             document.getElementById('editor-about-p3').value = data.p3 || '';
