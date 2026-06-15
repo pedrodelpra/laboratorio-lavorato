@@ -408,6 +408,41 @@
                 </div>
             </div>
 
+            <!-- 2.5. ESTATÍSTICAS DA HOME -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleEditorAccordion('acc-home-stats')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">query_stats</span>
+                        <h2 class="text-sm font-bold text-primary uppercase tracking-wider">Estatísticas da Home (Fundadores)</h2>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="chevron-acc-home-stats">expand_more</span>
+                </button>
+                <div id="acc-home-stats" class="hidden px-8 pb-8 pt-2 border-t border-slate-100">
+                    <form id="home-stats-edit-form" class="space-y-4">
+                        <p class="text-[10px] text-slate-400 font-medium">Edite os dois cards de estatísticas flutuantes (+35 e 50k+) exibidos sobre a foto dos fundadores.</p>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- Stat 1 -->
+                            <div class="border border-slate-100 rounded-xl p-4 space-y-2">
+                                <span class="text-[10px] uppercase font-bold text-slate-400">Card Esquerda (Ex: 50k+)</span>
+                                <input required id="editor-home-stat1-value" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Ex: 50k+"/>
+                                <input required id="editor-home-stat1-label" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Ex: Casos clínicos entregues"/>
+                            </div>
+                            <!-- Stat 2 -->
+                            <div class="border border-slate-100 rounded-xl p-4 space-y-2">
+                                <span class="text-[10px] uppercase font-bold text-slate-400">Card Direita (Ex: 35+)</span>
+                                <input required id="editor-home-stat2-value" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Ex: 35+"/>
+                                <input required id="editor-home-stat2-label" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-3 text-sm" type="text" placeholder="Ex: Anos de experiência clínica"/>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-primary text-white py-3.5 rounded-xl font-semibold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 duration-150 transition-all shadow-sm">
+                            Salvar Estatísticas da Home
+                        </button>
+                    </form>
+                </div>
+            </div>
+
             <!-- 3. DEPOIMENTOS -->
             <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                 <button type="button" onclick="toggleEditorAccordion('acc-testimonials')" class="w-full flex items-center justify-between px-8 py-5 hover:bg-slate-50/50 transition-colors">
@@ -2288,6 +2323,39 @@
             });
         }
 
+        // ===== HOME STATS EDITOR =====
+        const defaultHomeStats = {
+            stat1: { value: "50k+", label: "Casos clínicos entregues" },
+            stat2: { value: "35+", label: "Anos de experiência clínica" }
+        };
+
+        window.loadHomeStats = function() {
+            const data = JSON.parse(localStorage.getItem('dentalab_home_stats')) || defaultHomeStats;
+            document.getElementById('editor-home-stat1-value').value = data.stat1?.value || '50k+';
+            document.getElementById('editor-home-stat1-label').value = data.stat1?.label || 'Casos clínicos entregues';
+            document.getElementById('editor-home-stat2-value').value = data.stat2?.value || '35+';
+            document.getElementById('editor-home-stat2-label').value = data.stat2?.label || 'Anos de experiência clínica';
+        };
+
+        const homeStatsForm = document.getElementById('home-stats-edit-form');
+        if (homeStatsForm) {
+            homeStatsForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const data = {
+                    stat1: {
+                        value: document.getElementById('editor-home-stat1-value').value.trim(),
+                        label: document.getElementById('editor-home-stat1-label').value.trim()
+                    },
+                    stat2: {
+                        value: document.getElementById('editor-home-stat2-value').value.trim(),
+                        label: document.getElementById('editor-home-stat2-label').value.trim()
+                    }
+                };
+                await saveSiteSetting('home_stats', data);
+                showToast("Estatísticas da Home atualizadas com sucesso!");
+            });
+        }
+
         // ===== SERVICES EDITOR =====
         const defaultServices = [
             { name: "Metal Free", desc: "Coroas e facetas cerâmicas de alta translucidez, oferecendo estética natural e biocompatibilidade.", image: "assets/images/servicos/metal-free.jpg" },
@@ -2673,6 +2741,7 @@
         window.loadAllEditorData = function() {
             origLoadHero();
             window.loadDifferentials();
+            window.loadHomeStats();
             window.loadServices();
             window.loadCTA();
             window.loadAbout();

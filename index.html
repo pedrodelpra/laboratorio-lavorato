@@ -310,13 +310,13 @@
                 <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-full grid grid-cols-2 gap-3 z-20 px-3">
                     <!-- 50k+ Card -->
                     <div class="bg-surface-container-highest/95 backdrop-blur-md p-4 rounded-[20px] flex flex-col justify-between hover:translate-y-[-2px] transition-all border border-outline-variant/30 shadow-md">
-                        <span class="text-xl md:text-2xl font-black text-primary">50k+</span>
-                        <p class="text-[10px] md:text-xs font-semibold text-primary/80 mt-1 leading-tight">Casos clínicos entregues</p>
+                        <span id="home-stat1-value" class="text-xl md:text-2xl font-black text-primary">50k+</span>
+                        <p id="home-stat1-label" class="text-[10px] md:text-xs font-semibold text-primary/80 mt-1 leading-tight">Casos clínicos entregues</p>
                     </div>
                     <!-- 35+ Card -->
                     <div class="bg-primary/95 backdrop-blur-md text-on-primary p-4 rounded-[20px] flex flex-col justify-between hover:translate-y-[-2px] transition-all border border-white/10 shadow-md">
-                        <span class="text-xl md:text-2xl font-black text-white">35+</span>
-                        <p class="text-[10px] md:text-xs font-semibold text-white/80 mt-1 leading-tight">Anos de experiência clínica</p>
+                        <span id="home-stat2-value" class="text-xl md:text-2xl font-black text-white">35+</span>
+                        <p id="home-stat2-label" class="text-[10px] md:text-xs font-semibold text-white/80 mt-1 leading-tight">Anos de experiência clínica</p>
                     </div>
                 </div>
         </div>
@@ -965,6 +965,24 @@
             }
         } catch (e) {
             console.error("Erro ao carregar CTA:", e);
+        }
+
+        // Load dynamic Home Stats
+        try {
+            const homeStats = JSON.parse(localStorage.getItem('dentalab_home_stats'));
+            if (homeStats) {
+                const stat1Val = document.getElementById('home-stat1-value');
+                const stat1Lbl = document.getElementById('home-stat1-label');
+                const stat2Val = document.getElementById('home-stat2-value');
+                const stat2Lbl = document.getElementById('home-stat2-label');
+
+                if (stat1Val && homeStats.stat1 && homeStats.stat1.value) stat1Val.textContent = homeStats.stat1.value;
+                if (stat1Lbl && homeStats.stat1 && homeStats.stat1.label) stat1Lbl.textContent = homeStats.stat1.label;
+                if (stat2Val && homeStats.stat2 && homeStats.stat2.value) stat2Val.textContent = homeStats.stat2.value;
+                if (stat2Lbl && homeStats.stat2 && homeStats.stat2.label) stat2Lbl.textContent = homeStats.stat2.label;
+            }
+        } catch (e) {
+            console.error("Erro ao carregar Estatísticas da Home:", e);
         }
 
         // Dynamic footer rendering is now handled by footer-renderer.js
