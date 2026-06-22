@@ -314,9 +314,9 @@
                     </a>
                 </li>
                 <li>
-                    <a id="footer-email" class="inline-flex items-center gap-2 text-primary font-bold hover:opacity-85 transition-opacity" href="mailto:contato@laboratoriolavorato.com.br">
+                    <a id="footer-email" class="inline-flex items-center gap-2 text-primary font-bold hover:opacity-85 transition-opacity" href="mailto:laboratoriolavorato9@gmail.com">
                         <span class="material-symbols-outlined text-[16px]">mail</span>
-                        contato@laboratoriolavorato.com.br
+                        laboratoriolavorato9@gmail.com
                     </a>
                 </li>
             </ul>
@@ -384,25 +384,49 @@
     }
 
     // Dynamic About loader
-    try {
-        const aboutData = JSON.parse(localStorage.getItem('dentalab_about'));
-        if (aboutData) {
-            if (aboutData.p1) { const el = document.getElementById('about-p1'); if (el) el.textContent = aboutData.p1; }
-            if (aboutData.p2) { const el = document.getElementById('about-p2'); if (el) el.textContent = aboutData.p2; }
-            if (aboutData.p3) { const el = document.getElementById('about-p3'); if (el) el.textContent = aboutData.p3; }
-            for (let i = 1; i <= 3; i++) {
-                const stat = aboutData[`stat${i}`];
-                if (stat) {
-                    const vEl = document.getElementById(`about-stat${i}-value`);
-                    const lEl = document.getElementById(`about-stat${i}-label`);
-                    if (vEl && stat.value) vEl.textContent = stat.value;
-                    if (lEl && stat.label) lEl.textContent = stat.label;
-                }
+    function applyAboutData(aboutData) {
+        if (!aboutData) return;
+        if (aboutData.p1) { const el = document.getElementById('about-p1'); if (el) el.textContent = aboutData.p1; }
+        if (aboutData.p2) { const el = document.getElementById('about-p2'); if (el) el.textContent = aboutData.p2; }
+        if (aboutData.p3) { const el = document.getElementById('about-p3'); if (el) el.textContent = aboutData.p3; }
+        for (let i = 1; i <= 3; i++) {
+            const stat = aboutData[`stat${i}`];
+            if (stat) {
+                const vEl = document.getElementById(`about-stat${i}-value`);
+                const lEl = document.getElementById(`about-stat${i}-label`);
+                if (vEl && stat.value) vEl.textContent = stat.value;
+                if (lEl && stat.label) lEl.textContent = stat.label;
             }
         }
+    }
+
+    try {
+        const aboutData = JSON.parse(localStorage.getItem('dentalab_about'));
+        applyAboutData(aboutData);
     } catch (e) {
         console.error('Erro ao carregar dados Sobre Nós:', e);
     }
+
+    // Sincroniza em tempo real com o Supabase
+    import('./assets/js/supabase-client.js')
+        .then(async (module) => {
+            if (module.isSupabaseConfigured() && module.supabase) {
+                try {
+                    const { data, error } = await module.supabase
+                        .from('site_settings')
+                        .select('value')
+                        .eq('key', 'about')
+                        .maybeSingle();
+
+                    if (!error && data && data.value) {
+                        localStorage.setItem('dentalab_about', JSON.stringify(data.value));
+                        applyAboutData(data.value);
+                    }
+                } catch (e) {
+                    console.error("Erro ao sincronizar dados sobre do Supabase:", e);
+                }
+            }
+        });
 </script>
 <script type="module" src="/assets/js/legal-modal.js"></script>
 <script type="module" src="/assets/js/footer-renderer.js"></script>

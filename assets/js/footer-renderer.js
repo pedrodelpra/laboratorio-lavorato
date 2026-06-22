@@ -2,7 +2,7 @@
 
 const defaultFooter = {
     phone: "(11) 94793-7339",
-    email: "contato@laboratoriolavorato.com.br",
+    email: "laboratoriolavorato9@gmail.com",
     address: "R. Messina, 89 - Jardim Messina\nJundiaí - SP, 13207-480",
     tagline: "Elevando os padrões da prótese dentária com inovação tecnológica, precisão milimétrica e cuidado artesanal.",
     instagram: "https://www.instagram.com/laboratoriolavorato/",
@@ -120,7 +120,7 @@ function applyFooterData(data) {
 function initFooter() {
     let footerData = null;
     try {
-        const stored = localStorage.getItem('dentalab_footer');
+        const stored = localStorage.getItem('dentalab_footer_v2');
         if (stored) {
             footerData = JSON.parse(stored);
         }
@@ -132,9 +132,10 @@ function initFooter() {
         footerData = defaultFooter;
     }
 
+    // Aplica o cache ou default imediatamente para não atrasar a renderização da página
     applyFooterData(footerData);
 
-    // Sync from Supabase in background
+    // Busca em tempo real do Supabase
     import('./supabase-client.js')
         .then(async (module) => {
             if (module.isSupabaseConfigured() && module.supabase) {
@@ -146,7 +147,7 @@ function initFooter() {
                         .maybeSingle();
 
                     if (!error && data && data.value) {
-                        localStorage.setItem('dentalab_footer', JSON.stringify(data.value));
+                        localStorage.setItem('dentalab_footer_v2', JSON.stringify(data.value));
                         applyFooterData(data.value);
                     }
                 } catch (e) {

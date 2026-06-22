@@ -653,7 +653,7 @@
                             </div>
                             <div class="space-y-2">
                                 <label class="block text-[11px] uppercase tracking-wider text-slate-400 font-semibold">E-mail</label>
-                                <input id="editor-footer-email" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="email" placeholder="contato@laboratoriolavorato.com.br"/>
+                                <input id="editor-footer-email" class="w-full bg-slate-50/50 border border-slate-100 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl p-4 text-sm" type="email" placeholder="laboratoriolavorato9@gmail.com"/>
                             </div>
                         </div>
                         <div class="space-y-2">
@@ -2495,7 +2495,7 @@
         // ===== FOOTER/CONTACT EDITOR =====
         const defaultFooter = {
             phone: "(11) 94793-7339",
-            email: "contato@laboratoriolavorato.com.br",
+            email: "laboratoriolavorato9@gmail.com",
             address: "R. Messina, 89 - Jardim Messina\nJundiaí - SP, 13207-480",
             tagline: "Elevando os padrões da prótese dentária com inovação tecnológica, precisão milimétrica e cuidado artesanal.",
             instagram: "https://www.instagram.com/laboratoriolavorato/",
@@ -2504,7 +2504,7 @@
         };
 
         window.loadFooter = function() {
-            const data = JSON.parse(localStorage.getItem('dentalab_footer')) || defaultFooter;
+            const data = JSON.parse(localStorage.getItem('dentalab_footer_v2')) || defaultFooter;
             document.getElementById('editor-footer-phone').value = data.phone || '';
             document.getElementById('editor-footer-email').value = data.email || '';
             document.getElementById('editor-footer-address').value = data.address || '';
